@@ -1,79 +1,110 @@
 import React from 'react';
-import { Image, StyleSheet, Platform } from 'react-native';
-import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
-import { GlobalText, GlobalTextInput } from './GlobalTextProvider';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedView } from '@/components/ThemedView';
+import { GlobalText } from './GlobalTextProvider';
 
 export default function HomeScreen() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
+    Poppins_600SemiBold,
     Poppins_700Bold,
   });
 
   if (!fontsLoaded) {
+    return null;
   }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <GlobalText style={styles.titleText}>Welcome!</GlobalText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <GlobalText style={styles.subtitleText}>Step 1: Try it</GlobalText>
-        <GlobalText>
-          Edit <GlobalText style={styles.boldText}>app/(tabs)/index.tsx</GlobalText> to see changes.
-          Press{' '}
-          <GlobalText style={styles.boldText}>
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </GlobalText>{' '}
-          to open developer tools.
+    <View style={styles.container}>
+      {/* Title Section */}
+      <View style={styles.titleContainer}>
+        <GlobalText style={styles.titleText}>
+          The Next Way of Learning{' '}
+          <GlobalText style={styles.highlightText}>Integral & Derivative</GlobalText>
         </GlobalText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+
+      {/* White Icon */}
+      <Image
+        source={require('@/assets/images/white-icon.png')} // Adjust the path to your image file
+        style={styles.icon}
+        resizeMode="contain"
+      />
+
+      {/* Button Section */}
+      <View style={styles.footerContainer}>
+        <TouchableOpacity style={styles.button}>
+          <GlobalText style={styles.buttonText}>Get Started</GlobalText>
+        </TouchableOpacity>
+
+        {/* Footer Section */}
+        <GlobalText style={styles.footerText}>
+          Already have an account? <GlobalText style={styles.loginText}>Login</GlobalText>
+        </GlobalText>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#009D60',
+    padding: 16,
+    paddingHorizontal: 45,
+  },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+    marginTop: 100,
+    marginBottom: 340,
   },
   titleText: {
-    fontSize: 24,
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 40,
+    textAlign: 'left',
+    color: '#FFFFFF',
+    lineHeight: 48,
   },
-  subtitleText: {
-    fontSize: 18,
-    fontWeight: '700',
+  highlightText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#F7CA15', // Yellow for emphasis
   },
-  boldText: {
-    fontSize: 16,
-    fontWeight: '700',
+  icon: {
+    width: 400, // Adjust the width of the icon
+    height: 480, // Adjust the height of the icon
+    position: 'absolute',
+    top: '45%',
+    right: '30%',
+    alignSelf: 'center',
+    marginBottom: 40,
+  },
+  footerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    width: '80%',
+    backgroundColor: '#FFD700', // Button color
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderColor: '#000000', // Black border for contrast
+    borderWidth: 2,
+    borderRadius: 54,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40,
+  },
+  buttonText: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 28,
+    color: '#000000',
+  },
+  footerText: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 14,
+    color: '#000000',
+  },
+  loginText: {
+    color: '#FFFFFF',
   },
 });
