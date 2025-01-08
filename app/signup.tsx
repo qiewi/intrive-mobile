@@ -7,8 +7,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router'; // Import useRouter
 
 export default function SignUpScreen() {
+  const router = useRouter(); // Initialize the router
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
@@ -17,6 +20,10 @@ export default function SignUpScreen() {
 
   if (!fontsLoaded) {
     return null;
+  }
+
+  const navigateLogin = () => {  
+    router.push('/signin');
   }
 
   return (
@@ -57,7 +64,7 @@ export default function SignUpScreen() {
         </TouchableOpacity>
         <Text style={styles.registerText}>
           Already have an account?{' '}
-          <Text style={styles.registerLink}>Log In</Text>
+          <Text style={styles.registerLink} onPress={navigateLogin}>Log In</Text>
         </Text>
       </View>
     </View>
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 23,
     color: 'rgba(255, 255, 255, 0.5)', 
     textAlign: 'left',
-    marginTop: 0,
+    marginTop: 4,
   },
   form: {
     flex: 1,
@@ -122,7 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   loginButton: {
-    backgroundColor: '#FFB200',
+    backgroundColor: '#F7CA15',
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',

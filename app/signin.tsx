@@ -7,8 +7,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router'; // Import useRouter
 
 export default function SignInScreen() {
+  const router = useRouter(); // Initialize the router
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
@@ -17,6 +20,14 @@ export default function SignInScreen() {
 
   if (!fontsLoaded) {
     return null;
+  }
+
+  const handleLogin = () => {
+    router.push('/explore');
+  };
+
+  const navigateRegister = () => {  
+    router.push('/signup');
   }
 
   return (
@@ -48,12 +59,12 @@ export default function SignInScreen() {
         <TouchableOpacity style={styles.forgotPassword}>
           <Text style={styles.forgotPasswordText}>Forgot Password</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
         <Text style={styles.registerText}>
           Don’t have an account?{' '}
-          <Text style={styles.registerLink}>Register</Text>
+          <Text style={styles.registerLink} onPress={navigateRegister}>Register</Text>
         </Text>
       </View>
     </View>
@@ -69,7 +80,7 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 40,
     paddingHorizontal: 30,
-    marginTop: 130,
+    marginTop: 160,
   },
   title: {
     fontFamily: 'Poppins_600SemiBold',
@@ -77,7 +88,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'left',
     marginBottom: 0,
-    lineHeight: 48,
+    lineHeight: 40,
   },
   titleBold: {
     fontFamily: 'Poppins_600SemiBold',
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 23,
     color: 'rgba(255, 255, 255, 0.5)',
     textAlign: 'left',
-    marginTop: 10,
+    marginTop: 4,
   },
   form: {
     flex: 1,
@@ -135,7 +146,7 @@ const styles = StyleSheet.create({
     color: '#F7CA15',
   },
   loginButton: {
-    backgroundColor: '#FFB200',
+    backgroundColor: '#F7CA15',
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',

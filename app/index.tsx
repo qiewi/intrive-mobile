@@ -1,10 +1,13 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router'; // Import the useRouter hook
 
-import { GlobalText } from './GlobalTextProvider';
+import { GlobalText } from '../components/GlobalTextProvider';
 
 export default function HomeScreen() {
+  const router = useRouter(); // Initialize the router
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
@@ -14,6 +17,10 @@ export default function HomeScreen() {
   if (!fontsLoaded) {
     return null;
   }
+
+  const handleGetStartedPress = () => {
+    router.push('/signin'); // Navigate to the signin page
+  };
 
   return (
     <View style={styles.container}>
@@ -34,7 +41,7 @@ export default function HomeScreen() {
 
       {/* Button Section */}
       <View style={styles.footerContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleGetStartedPress}>
           <GlobalText style={styles.buttonText}>Get Started</GlobalText>
         </TouchableOpacity>
 
@@ -84,7 +91,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '80%',
-    backgroundColor: '#FFD700', // Button color
+    backgroundColor: '#F7CA15', // Button color
     paddingVertical: 14,
     paddingHorizontal: 8,
     borderColor: '#000000', // Black border for contrast
