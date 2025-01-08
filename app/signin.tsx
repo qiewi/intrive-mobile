@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
 export default function SignInScreen() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
+    Poppins_600SemiBold,
     Poppins_700Bold,
   });
 
@@ -21,7 +22,8 @@ export default function SignInScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Sign in to your Account</Text>
+        <Text style={styles.title}>Sign in to your</Text>
+        <Text style={styles.titleBold}>Account</Text>
         <Text style={styles.subtitle}>Access Your Account</Text>
       </View>
 
@@ -65,37 +67,46 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   header: {
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    marginTop: 50,
+    marginBottom: 40,
+    paddingHorizontal: 30,
+    marginTop: 130,
   },
   title: {
-    fontFamily: 'Poppins_700Bold',
-    fontSize: 24,
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 37,
     color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 4,
+    textAlign: 'left',
+    marginBottom: 0,
+    lineHeight: 48,
+  },
+  titleBold: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 37,
+    color: '#FFFFFF',
+    textAlign: 'left',
+    marginTop: 3,
   },
   subtitle: {
-    fontFamily: 'Poppins_400Regular',
-    fontSize: 16,
-    color: '#FFFFFF',
-    textAlign: 'center',
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 23,
+    color: 'rgba(255, 255, 255, 0.5)',
+    textAlign: 'left',
+    marginTop: 10,
   },
   form: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    paddingVertical: 50,
-    paddingHorizontal: 20,
+    paddingVertical: 60,
+    paddingHorizontal: 30,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 30,
   },
   label: {
     fontFamily: 'Poppins_400Regular',
@@ -115,31 +126,32 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
+    marginBottom: 35,
+    marginTop: -15,
   },
   forgotPasswordText: {
     fontFamily: 'Poppins_400Regular',
-    fontSize: 14,
-    color: '#FFB200',
+    fontSize: 15,
+    color: '#F7CA15',
   },
   loginButton: {
     backgroundColor: '#FFB200',
     borderRadius: 30,
-    paddingVertical: 10,
+    paddingVertical: 14,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 25,
     borderWidth: 1,
     borderColor: '#000000',
   },
   loginButtonText: {
     fontFamily: 'Poppins_400Regular',
-    fontSize: 18,
+    fontSize: 19,
     color: '#000000',
   },
   registerText: {
     fontFamily: 'Poppins_400Regular',
-    fontSize: 14,
-    color: '#A0A0A0',
+    fontSize: 15,
+    color: '#000000',
     textAlign: 'center',
   },
   registerLink: {
