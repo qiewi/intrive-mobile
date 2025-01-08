@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 40,
     paddingVertical: 60,
     paddingHorizontal: 30,
-    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     marginBottom: 25,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#000000',
   },
   loginButtonText: {
