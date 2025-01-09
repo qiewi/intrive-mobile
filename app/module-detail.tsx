@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { AntDesign } from '@expo/vector-icons';
 import { VideoCard } from '../components/ui/VideoCard';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router';
 
 export default function ModuleDetail() {
+  const router = useRouter();
   const [watchedVideos, setWatchedVideos] = useState(new Set());
 
   const [fontsLoaded] = useFonts({
@@ -31,11 +33,15 @@ export default function ModuleDetail() {
     setWatchedVideos((prev) => new Set([...prev, videoId]));
   };
 
+  const BackToHome = () => {
+    router.push('/home');
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={styles.backButton} onPress={BackToHome}>
           <AntDesign name="left" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Integral Tentu</Text>

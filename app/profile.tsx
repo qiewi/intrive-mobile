@@ -11,6 +11,7 @@ import {
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
+import { auth } from './firebaseConfig';
 
 const ProfileScreen = () => {
   const router = useRouter();
@@ -51,8 +52,8 @@ const ProfileScreen = () => {
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <Image source={require('../assets/images/avatar.png')} style={styles.avatar} />
-        <Text style={[styles.username, { fontFamily: 'Poppins_600SemiBold' }]}>Rizqi Maha Sigma</Text>
-        <Text style={[styles.handle, { fontFamily: 'Poppins_400Regular' }]}>@qiewit</Text>
+        <Text style={[styles.username, { fontFamily: 'Poppins_600SemiBold' }]}>{auth.currentUser?.displayName || 'User'}</Text>
+        <Text style={[styles.handle, { fontFamily: 'Poppins_400Regular' }]}>{auth.currentUser?.email || 'email@example.com'}</Text>
         
         {/* Top Progress Bar */}
         <View style={styles.progressContainer}>
