@@ -6,10 +6,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useRouter } from 'expo-router';
+import { auth } from './firebaseConfig';
 
 const ProfileScreen = () => {
+  const router = useRouter();
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
@@ -23,29 +29,39 @@ const ProfileScreen = () => {
     { id: 1, title: 'Super\nStar' },
     { id: 2, title: 'Quiz\nChampion' },
     { id: 3, title: 'Math Wiz\nKid' },
-    { id: 4, title: 'Science' },
+    { id: 4, title: 'Science \nGang' },
+    { id: 5, title: 'Language Master' },
+    { id: 6, title: 'Tech Guru' },
+    { id: 7, title: 'Sports Enthusiast' },
+    { id: 8, title: 'Art Creator' },
+    { id: 9, title: 'Music Lover' },
+    { id: 10, title: 'Adventure Seeker' },
   ];
+
+  const BackToHome = () => {
+    router.push('/home');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Close Button */}
-      <TouchableOpacity style={styles.closeButton}>
+      <TouchableOpacity style={styles.closeButton} onPress={BackToHome}>
         <Text style={[styles.closeButtonText, { fontFamily: 'Poppins_600SemiBold' }]}>✕</Text>
       </TouchableOpacity>
 
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <Image source={require('../assets/images/avatar.png')} style={styles.avatar} />
-        <Text style={[styles.username, { fontFamily: 'Poppins_600SemiBold' }]}>Rizqi Maha Sigma</Text>
-        <Text style={[styles.handle, { fontFamily: 'Poppins_400Regular' }]}>@qiewit</Text>
+        <Text style={[styles.username, { fontFamily: 'Poppins_600SemiBold' }]}>{auth.currentUser?.displayName || 'User'}</Text>
+        <Text style={[styles.handle, { fontFamily: 'Poppins_400Regular' }]}>{auth.currentUser?.email || 'email@example.com'}</Text>
         
         {/* Top Progress Bar */}
         <View style={styles.progressContainer}>
           <View style={styles.progressHeader}>
             <Text style={[styles.progressTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Level Progress</Text>
             <View style={styles.pxContainer}>
-              <Image source={require('../assets/images/badge.png')} style={styles.pxIcon} />
-              <Text style={[styles.pxText, { fontFamily: 'Poppins_400Regular' }]}>373 PX</Text>
+                <Icon name="star" style={styles.pxIcon} />
+                <Text style={[styles.pxText, { fontFamily: 'Poppins_400Regular' }]}>373 PX</Text>
             </View>
           </View>
           <View style={styles.progressBar}>
@@ -58,27 +74,29 @@ const ProfileScreen = () => {
       <View style={styles.whiteContainer}>
         {/* Streaks Section */}
         <TouchableOpacity style={styles.streakCard}>
-          <View style={styles.streakContent}>
-            <View style={styles.streakTextContainer}>
-              <Text style={[styles.streakLabel, { fontFamily: 'Poppins_400Regular' }]}>You did</Text>
-              <Text style={[styles.streakCount, { fontFamily: 'Poppins_600SemiBold' }]}>6 streaks</Text>
+            <View style={styles.streakContent}>
+                <View style={styles.streakTextContainer}>
+                <Text style={[styles.streakLabel, { fontFamily: 'Poppins_400Regular' }]}>You did</Text>
+                <Text style={[styles.streakCount, { fontFamily: 'Poppins_600SemiBold' }]}>6 streaks</Text>
+                </View>
+                <View style={styles.streakImageContainer}>
+                <Image source={require('../assets/images/streakImage.png')} style={styles.streakImage} />
+                </View>
             </View>
-            <Image source={require('../assets/images/streakImage.png')} style={styles.streakImage} />
-          </View>
-          <Text style={[styles.arrowIcon, { fontFamily: 'Poppins_400Regular' }]}>›</Text>
+            <Text style={[styles.arrowIcon, { fontFamily: 'Poppins_400Regular' }]}>›</Text>
         </TouchableOpacity>
 
         {/* Status Cards */}
         <View style={styles.statusContainer}>
           <View style={styles.statusCard}>
-            <Image source={require('../assets/images/badge.png')} style={styles.statusIcon} />
+            <Image source={require('../assets/images/level.png')} style={styles.statusIcon} />
             <View>
               <Text style={[styles.statusLabel, { fontFamily: 'Poppins_400Regular' }]}>Level</Text>
               <Text style={[styles.statusValue, { fontFamily: 'Poppins_600SemiBold' }]}>Bronze</Text>
             </View>
           </View>
           <View style={styles.statusCard}>
-            <Image source={require('../assets/images/badge.png')} style={styles.statusIcon} />
+            <Image source={require('../assets/images/points.png')} style={styles.statusIcon} />
             <View>
               <Text style={[styles.statusLabel, { fontFamily: 'Poppins_400Regular' }]}>Points</Text>
               <Text style={[styles.statusValue, { fontFamily: 'Poppins_600SemiBold' }]}>373</Text>
@@ -96,15 +114,17 @@ const ProfileScreen = () => {
 
         {/* Badges Section */}
         <View style={styles.badgesSection}>
-          <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Badges</Text>
-          <View style={styles.badgesGrid}>
-            {badges.map((badge) => (
-              <View key={badge.id} style={styles.badgeContainer}>
-                <Image source={require('../assets/images/badge.png')} style={styles.badgeIcon} />
-                <Text style={[styles.badgeTitle, { fontFamily: 'Poppins_400Regular' }]}>{badge.title}</Text>
-              </View>
-            ))}
-          </View>
+            <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Badges</Text>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                <View style={styles.badgesGrid}>
+                {badges.map((badge) => (
+                    <View key={badge.id} style={styles.badgeContainer}>
+                    <Image source={require('../assets/images/badge.png')} style={styles.badgeIcon} />
+                    <Text style={[styles.badgeTitle, { fontFamily: 'Poppins_400Regular' }]}>{badge.title}</Text>
+                    </View>
+                ))}
+                </View>
+            </ScrollView>
         </View>
       </View>
     </SafeAreaView>
@@ -118,8 +138,8 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    right: 20,
-    top: 40,
+    right: 40,
+    top: 50,
     zIndex: 1,
   },
   closeButtonText: {
@@ -128,7 +148,7 @@ const styles = StyleSheet.create({
   },
   profileSection: {
     alignItems: 'center',
-    paddingTop: 100,
+    paddingTop: 80,
     paddingHorizontal: 20,
   },
   avatar: {
@@ -143,8 +163,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   handle: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 15,
   },
   progressContainer: {
     width: '100%',
@@ -154,11 +174,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   progressTitle: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 15,
   },
   progressBar: {
     height: 15,
@@ -169,22 +189,24 @@ const styles = StyleSheet.create({
   progress: {
     height: '100%',
     backgroundColor: '#FFD700',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#000000',
   },
   pxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   pxIcon: {
-    width: 16,
-    height: 16,
+    fontSize: 14,
+    color: '#FFD700', 
     marginRight: 5,
   },
   pxText: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 15,
   },
   whiteContainer: {
-    flex: 1,
     backgroundColor: 'white',
     marginTop: 20,
     borderTopLeftRadius: 30,
@@ -199,34 +221,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    marginTop: 10,
+    borderWidth: 2,
+    borderColor: '#000000',
   },
   streakContent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    flex: 1,
   },
   streakTextContainer: {
     flexDirection: 'column',
   },
   streakLabel: {
     color: 'white',
-    fontSize: 12,
-    marginBottom: 2,
+    fontSize: 16,
   },
   streakCount: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 23,
     fontWeight: 'bold',
   },
+  streakImageContainer: {
+    marginLeft: 'auto',
+    marginRight: 10,
+  },
   streakImage: {
-    width: 30,
-    height: 30,
+    width: 50, 
+    height: 50,
   },
   arrowIcon: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 40,
   },
   statusContainer: {
     flexDirection: 'row',
@@ -242,17 +269,17 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   statusIcon: {
-    width: 24,
-    height: 24,
+    width: 44,
+    height: 44,
     marginRight: 10,
   },
   statusLabel: {
     color: '#666',
-    fontSize: 12,
+    fontSize: 16,
   },
   statusValue: {
     color: '#333',
-    fontSize: 16,
+    fontSize: 23,
     fontWeight: 'bold',
   },
   levelSection: {
@@ -260,43 +287,52 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: '#333',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
   levelProgressBar: {
-    height: 16, // Increased thickness
+    height: 34,
     backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    borderRadius: 20,
     overflow: 'hidden',
   },
   levelProgress: {
     height: '100%',
     backgroundColor: '#FFD700',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#000000',
   },
   badgesSection: {
     marginBottom: 20,
+    paddingHorizontal: 10,
   },
+  
   badgesGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
+    justifyContent: 'flex-start', 
+    flexWrap: 'nowrap',
   },
+  
   badgeContainer: {
-    width: '23%',
+    width: 70,
     alignItems: 'center',
-    marginBottom: 15,
-  },
-  badgeIcon: {
-    width: 45,
-    height: 45,
+    marginRight: 10,
     marginBottom: 5,
   },
+  
+  badgeIcon: {
+    width: 60,
+    height: 70, 
+    marginBottom: 5,
+  },
+  
   badgeTitle: {
     color: '#333',
-    fontSize: 10,
+    fontSize: 12,
     textAlign: 'center',
-  },
+  }
 });
 
 export default ProfileScreen;

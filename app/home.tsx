@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,15 +15,29 @@ import { QuizListItem } from '../components/ui/QuizListItem';
 import { Navbar } from '../components/ui/Navbar';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
+import { auth } from './firebaseConfig';
 
 export default function Home() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('integral');
+  const [username, setUsername] = useState('');
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
+
+  useEffect(() => {
+    const loggedIn = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUsername(user.displayName || 'User');
+      } else {
+        setUsername('User');
+      }
+    });
+
+    return () => loggedIn();
+  }, []);
 
   const NavigateProfile = () => {
     router.push('/profile');
@@ -89,7 +103,7 @@ export default function Home() {
         </TouchableOpacity>
 
         {/* Greeting */}
-        <Text style={styles.greeting}>Hi, Khayla</Text>
+        <Text style={styles.greeting}>Hi, {username}!</Text>
         <Text style={styles.title}>Let's continue a quiz!</Text>
 
         {/* Continue Quiz Cards */}

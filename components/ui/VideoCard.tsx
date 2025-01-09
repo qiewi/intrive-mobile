@@ -54,12 +54,12 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingHorizontal: 20,
     width: 260,
-    height: 130,
+    height: 140,
     marginRight: 10,
     justifyContent: 'center'
   },
   header: {
-    marginBottom: 8,
+    marginBottom: 16,
   },
   videoTitle: {
     color: 'white',
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   videoContent: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 18,
     fontFamily: 'Poppins_600SemiBold',
   },
   videoCardBottom: {
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   watchButtonText: {
     color: 'black',
-    fontSize: 12,
+    fontSize: 16,
     fontFamily: 'Poppins_600SemiBold',
   },
 });

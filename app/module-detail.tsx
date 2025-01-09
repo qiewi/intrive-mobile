@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { AntDesign } from '@expo/vector-icons';
 import { VideoCard } from '../components/ui/VideoCard';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router';
 
 export default function ModuleDetail() {
+  const router = useRouter();
   const [watchedVideos, setWatchedVideos] = useState(new Set());
 
   const [fontsLoaded] = useFonts({
@@ -31,11 +33,15 @@ export default function ModuleDetail() {
     setWatchedVideos((prev) => new Set([...prev, videoId]));
   };
 
+  const BackToHome = () => {
+    router.push('/home');
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={styles.backButton} onPress={BackToHome}>
           <AntDesign name="left" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Integral Tentu</Text>
@@ -104,7 +110,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 32,
+    marginBottom: 16,
   },
   backButton: {
     padding: 8,
@@ -117,7 +124,7 @@ const styles = StyleSheet.create({
   levelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 12,
     marginBottom: 20,
   },
   levelBadge: {
@@ -176,7 +183,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
   },
   topicTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontFamily: 'Poppins_600SemiBold',
   },
   sectionTitle: {
@@ -185,7 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   videoScroll: {
-    marginBottom: 30, // Increased spacing to bring up the score section
+    marginBottom: 10, // Increased spacing to bring up the score section
   },
   scoreContainer: {
     marginBottom: 40,
@@ -227,7 +234,7 @@ const styles = StyleSheet.create({
   },
   levelUpButton: {
     backgroundColor: '#F7CA15',
-    paddingVertical: 20, // Increased height
+    paddingVertical: 16, // Increased height
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 54, // Larger border radius
