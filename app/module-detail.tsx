@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 32,
+    marginBottom: 16,
   },
   backButton: {
     padding: 8,
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
   levelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 12,
     marginBottom: 20,
   },
   levelBadge: {
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
   },
   topicTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontFamily: 'Poppins_600SemiBold',
   },
   sectionTitle: {
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   videoScroll: {
-    marginBottom: 30, // Increased spacing to bring up the score section
+    marginBottom: 10, // Increased spacing to bring up the score section
   },
   scoreContainer: {
     marginBottom: 40,
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   },
   levelUpButton: {
     backgroundColor: '#F7CA15',
-    paddingVertical: 20, // Increased height
+    paddingVertical: 16, // Increased height
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 54, // Larger border radius
