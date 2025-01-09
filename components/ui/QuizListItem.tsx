@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router';
 
 interface QuizListItemProps {
   title: string;
@@ -11,15 +12,20 @@ interface QuizListItemProps {
 }
 
 export const QuizListItem = ({ title, level, subtitle, image, onPress }: QuizListItemProps) => {
+  const router = useRouter();
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
 
+  const handlePress = () => {
+    router.push('/module-detail');
+  };
+
   if (!fontsLoaded) return null;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
       {/* Green Container with Padding */}
       <View style={styles.imageContainer}>
         <Image source={image} style={styles.image} resizeMode="contain" />

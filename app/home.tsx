@@ -28,6 +28,10 @@ export default function Home() {
     router.push('/profile');
   };
 
+  const NavigateModule = () => {
+    router.push('/module-detail');
+  };
+
   if (!fontsLoaded) {
     return null; // Return null until fonts are loaded
   }
