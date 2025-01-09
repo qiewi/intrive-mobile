@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
-import { useRouter } from 'expo-router'; // Import useRouter
+import { useRouter } from 'expo-router';
+import { auth } from './firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function SignInScreen() {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -18,17 +21,40 @@ export default function SignInScreen() {
     Poppins_700Bold,
   });
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
   if (!fontsLoaded) {
     return null;
   }
 
-  const handleLogin = () => {
-    router.push('/explore');
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'All fields are required!');
+        return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      Alert.alert('Success', 'Login successful!');
+      router.push('/home');
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        Alert.alert('Error', 'Your email is invalid or the password is incorrect. Please try again.');
+      } else if (error.code === 'auth/wrong-password') {
+        Alert.alert('Error', 'Your email is invalid or the password is incorrect. Please try again.');
+      } else {
+        Alert.alert('Error', 'Your email is invalid or the password is incorrect. Please try again.');
+      }
+    }
   };
 
-  const navigateRegister = () => {  
+  const navigateRegister = () => {
     router.push('/signup');
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -45,6 +71,9 @@ export default function SignInScreen() {
             style={styles.input}
             placeholder="Enter your email"
             placeholderTextColor="#A0A0A0"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
           />
         </View>
         <View style={styles.inputContainer}>
@@ -54,8 +83,11 @@ export default function SignInScreen() {
             placeholder="Enter your password"
             secureTextEntry
             placeholderTextColor="#A0A0A0"
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
+
         <TouchableOpacity style={styles.forgotPassword}>
           <Text style={styles.forgotPasswordText}>Forgot Password</Text>
         </TouchableOpacity>
@@ -64,7 +96,9 @@ export default function SignInScreen() {
         </TouchableOpacity>
         <Text style={styles.registerText}>
           Don’t have an account?{' '}
-          <Text style={styles.registerLink} onPress={navigateRegister}>Register</Text>
+          <Text style={styles.registerLink} onPress={navigateRegister}>
+            Register
+          </Text>
         </Text>
       </View>
     </View>

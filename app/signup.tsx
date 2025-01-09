@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
-import { useRouter } from 'expo-router'; // Import useRouter
+import { useRouter } from 'expo-router';
+import { auth } from './firebaseConfig';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 export default function SignUpScreen() {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -18,13 +21,42 @@ export default function SignUpScreen() {
     Poppins_700Bold,
   });
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+
   if (!fontsLoaded) {
     return null;
   }
 
-  const navigateLogin = () => {  
+  const navigateLogin = () => {
     router.push('/signin');
-  }
+  };
+
+  const handleSignUp = async () => {
+    if (!email || !password || !username) {
+      Alert.alert('Error', 'All fields are required!');
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (user) {
+        await updateProfile(user, { displayName: username });
+      }
+
+      Alert.alert('Success', 'Account created successfully!');
+      router.push('/signin');
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('Error', 'The email address is already registered. Please use a different email.');
+      } else {
+        Alert.alert('Error', 'The email address is already registered. Please use a different email.');
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -40,6 +72,8 @@ export default function SignUpScreen() {
             style={styles.input}
             placeholder="Enter your username"
             placeholderTextColor="#A0A0A0"
+            value={username}
+            onChangeText={setUsername}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -48,6 +82,9 @@ export default function SignUpScreen() {
             style={styles.input}
             placeholder="Enter your email"
             placeholderTextColor="#A0A0A0"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
           />
         </View>
         <View style={styles.inputContainer}>
@@ -57,14 +94,18 @@ export default function SignUpScreen() {
             placeholder="Enter your password"
             secureTextEntry
             placeholderTextColor="#A0A0A0"
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
           <Text style={styles.loginButtonText}>Create Account</Text>
         </TouchableOpacity>
         <Text style={styles.registerText}>
           Already have an account?{' '}
-          <Text style={styles.registerLink} onPress={navigateLogin}>Log In</Text>
+          <Text style={styles.registerLink} onPress={navigateLogin}>
+            Log In
+          </Text>
         </Text>
       </View>
     </View>
@@ -93,7 +134,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: 'Poppins_600SemiBold',
     fontSize: 23,
-    color: 'rgba(255, 255, 255, 0.5)', 
+    color: 'rgba(255, 255, 255, 0.5)',
     textAlign: 'left',
     marginTop: 4,
   },
