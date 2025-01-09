@@ -13,14 +13,20 @@ import { QuizCard } from '../components/ui/QuizCard';
 import { MaterialTabs } from '../components/ui/MaterialTabs';
 import { QuizListItem } from '../components/ui/QuizListItem';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { useRouter } from 'expo-router';
 
 export default function Home() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('integral');
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
+
+  const NavigateProfile = () => {
+    router.push('/profile');
+  };
 
   if (!fontsLoaded) {
     return null; // Return null until fonts are loaded
@@ -58,26 +64,28 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.profile}>
-            <Image
-              source={require('../assets/quiz/1.png')}
-              style={styles.avatar}
-            />
-            <View style={styles.headerContainer}>
-              <View style={styles.levelContainer}>
-                <Text style={styles.levelText}>My Level Progress</Text>
-                <View style={styles.xpContainer}>
-                  <FontAwesome name="star" size={16} color="#FFB800" />
-                  <Text style={styles.xpText}>373 XP</Text>
+        <TouchableOpacity onPress={NavigateProfile}>
+          <View style={styles.header}>
+            <View style={styles.profile}>
+              <Image
+                source={require('../assets/quiz/1.png')}
+                style={styles.avatar}
+              />
+              <View style={styles.headerContainer}>
+                <View style={styles.levelContainer}>
+                  <Text style={styles.levelText}>My Level Progress</Text>
+                  <View style={styles.xpContainer}>
+                    <FontAwesome name="star" size={16} color="#FFB800" />
+                    <Text style={styles.xpText}>373 XP</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.progressBar}>
-                <View style={[styles.progress, { width: '60%' }]} />
+                <View style={styles.progressBar}>
+                  <View style={[styles.progress, { width: '60%' }]} />
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Greeting */}
         <Text style={styles.greeting}>Hi, Khayla</Text>
@@ -158,7 +166,6 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
-    marginTop: '10%'
   },
   profile: {
     flexDirection: 'row',
