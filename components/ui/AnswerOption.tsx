@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFB800',
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,
     color: '#000',
     fontFamily: 'Poppins_400Regular',
     textAlign: 'center', // Center the text

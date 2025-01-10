@@ -171,7 +171,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    marginTop: 32,
   },
   headerTitle: {
     fontSize: 18,
@@ -236,8 +235,8 @@ const styles = StyleSheet.create({
   },
   questionContainer: {
     padding: 16,
-    paddingTop: 40,
-    marginBottom: 8,
+    paddingBottom: 4,
+    paddingTop: 16,
   },
   mascot: {
     width: 120,
@@ -247,7 +246,7 @@ const styles = StyleSheet.create({
     top: 0,
   },
   questionText: {
-    fontSize: 30,
+    fontSize: 24,
     fontFamily: 'Poppins_600SemiBold',
     color: 'white',
     paddingHorizontal: 8,
@@ -268,7 +267,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     color: 'white',
     marginLeft: 12,
-    marginBottom: 24,
+    marginBottom: 16,
     opacity: 0.7,
   },
   navigation: {
