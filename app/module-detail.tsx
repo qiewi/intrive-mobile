@@ -37,6 +37,10 @@ export default function ModuleDetail() {
     router.push('/home');
   };
 
+  const StartQuiz = () => {
+    router.push('/quiz-page');
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -93,7 +97,7 @@ export default function ModuleDetail() {
       </View>
 
       {/* Level Up Button */}
-      <TouchableOpacity style={styles.levelUpButton}>
+      <TouchableOpacity style={styles.levelUpButton} onPress={StartQuiz}>
         <Text style={styles.levelUpText}>Level Up</Text>
       </TouchableOpacity>
     </View>
