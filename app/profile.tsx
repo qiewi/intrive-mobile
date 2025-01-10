@@ -38,14 +38,14 @@ const ProfileScreen = () => {
     { id: 10, title: 'Adventure Seeker' },
   ];
 
-  const BackToHome = () => {
-    router.push('/home');
+  const BackToPreviousPage = () => {
+    router.back();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Close Button */}
-      <TouchableOpacity style={styles.closeButton} onPress={BackToHome}>
+      <TouchableOpacity style={styles.closeButton} onPress={BackToPreviousPage}>
         <Text style={[styles.closeButtonText, { fontFamily: 'Poppins_600SemiBold' }]}>✕</Text>
       </TouchableOpacity>
 
