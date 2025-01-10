@@ -29,21 +29,25 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
+    borderColor: '#000',
+    borderWidth: 2,
     borderRadius: 100,
     padding: 16,
+    width: '48%', // Changed to allow 2 items per row with gap
     marginBottom: 12,
-    width: '100%',
   },
   selected: {
     backgroundColor: '#FFB800',
   },
   text: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#000',
-    fontWeight: '500',
+    fontFamily: 'Poppins_400Regular',
+    textAlign: 'center', // Center the text
   },
   selectedText: {
     color: '#000',
+    fontFamily: 'Poppins_600SemiBold',
   },
 });
 

@@ -14,7 +14,8 @@ export const ProgressDots: React.FC<ProgressDotsProps> = ({ total, current }) =>
           key={index}
           style={[
             styles.dot,
-            index < current ? styles.completed : index === current ? styles.current : styles.upcoming,
+            index < current ? styles.completed : styles.upcoming,
+            { flex: 1 / total, marginHorizontal: total > 1 ? 2 : 0 }, // Dynamic width and spacing
           ]}
         />
       ))}
@@ -24,22 +25,19 @@ export const ProgressDots: React.FC<ProgressDotsProps> = ({ total, current }) =>
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   dot: {
-    width: 32,
-    height: 4,
-    borderRadius: 2,
+    height: 12,
+    borderRadius: 36,
   },
   completed: {
-    backgroundColor: 'white',
-  },
-  current: {
     backgroundColor: 'white',
   },
   upcoming: {
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
 });
-

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,34 +8,43 @@ import {
   Image,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { AnswerOption } from '../components/ui/AnswerOption';
 import { ProgressDots } from '../components/ui/ProgressDots';
 
-interface QuizPageProps {
-  title?: string;
-  questions?: Array<{
-    question: string;
-    answers: string[];
-    correctAnswer: number;
-  }>;
-  onClose?: () => void;
+// Types
+interface Question {
+  question: string;
+  answers: string[];
+  correctAnswer: number;
 }
 
-export const QuizPage: React.FC<QuizPageProps> = ({
-  title = "Integral Quiz",
-  questions = [
-    {
-      question: "Gunakan Teorema Dasar Kalkulus untuk menemukan turunan dasar dari fungsi F(x) = ∫ₓ sin(t²) dt.",
-      answers: ["sin(x²)", "cos(x²)", "2x sin(x²)", "-sin(x²)"],
-      correctAnswer: 0,
-    },
-    // Add more placeholder questions as needed
-  ],
-  onClose,
-}) => {
+// Placeholder data
+const placeholderQuestions: Question[] = [
+  {
+    question: "Gunakan Teorema Dasar Kalkulus untuk menemukan turunan dasar dari fungsi F(x) = ∫ₓ sin(t²) dt.",
+    answers: ["sin(x²)", "cos(x²)", "2x sin(x²)", "-sin(x²)"],
+    correctAnswer: 0,
+  },
+  {
+    question: "Gunakan Teorema Dasar Kalkulus untuk menemukan turunan dasar dari fungsi F(x) = ∫ₓ sin(t²) dt.",
+    answers: ["sin(x²)", "cos(x²)", "2x sin(x²)", "-sin(x²)"],
+    correctAnswer: 0,
+  },
+  // Add more placeholder questions as needed
+];
+
+export default function QuizPage() {
+  const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
+
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -44,6 +53,8 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
     return () => clearInterval(timer);
   }, []);
+
+  if (!fontsLoaded) return null;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -59,59 +70,73 @@ export const QuizPage: React.FC<QuizPageProps> = ({
   };
 
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < placeholderQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
     }
+  };
+
+  const handleClose = () => {
+    router.back();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={onClose}>
-          <Feather name="arrow-left" size={24} color="white" />
+        <TouchableOpacity style={styles.iconButton} onPress={handleClose}>
+            <Feather name="arrow-left" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{title}</Text>
-        <TouchableOpacity>
-          <Feather name="grid" size={24} color="white" />
+        <Text style={styles.headerTitle}>Integral Quiz</Text>
+        <TouchableOpacity style={styles.iconButton}>
+            <Feather name="grid" size={20} color="white" />
         </TouchableOpacity>
       </View>
+
 
       {/* Progress Section */}
       <View style={styles.progressSection}>
-        <View>
-          <Text style={styles.questionCount}>0{currentQuestion + 1} Question</Text>
-          <ProgressDots total={7} current={currentQuestion} />
+        <View style={styles.progressInfo}>
+          <Text style={styles.questionCount}>Question {currentQuestion + 1}</Text>
+          <Text style={styles.questionTotal}>{currentQuestion + 1} of {placeholderQuestions.length}</Text>
         </View>
-        <View style={styles.timerContainer}>
-          <Text style={styles.timer}>{formatTime(timeLeft)}</Text>
+        <View style={styles.progressContent}>
+          <ProgressDots total={placeholderQuestions.length} current={currentQuestion + 1} />
+          
         </View>
       </View>
 
-      {/* Mascot and Question */}
-      <View style={styles.questionContainer}>
+      <View style={styles.timerSection}>
         <Image
           source={require('../assets/quiz/1.png')}
           style={styles.mascot}
         />
+        <View style={styles.timerContainer}>
+                <Text style={styles.timer}>{formatTime(timeLeft)}</Text>
+        </View>
+      </View>
+      
+      {/* Mascot and Question */}
+      <View style={styles.questionContainer}>
         <Text style={styles.questionText}>
-          {questions[currentQuestion].question}
+          {placeholderQuestions[currentQuestion].question}
         </Text>
       </View>
 
       {/* Answer Options */}
       <View style={styles.answersContainer}>
         <Text style={styles.chooseText}>Choose your answer</Text>
-        {questions[currentQuestion].answers.map((answer, index) => (
-          <AnswerOption
-            key={index}
-            label={String.fromCharCode(65 + index)}
-            answer={answer}
-            isSelected={selectedAnswer === index}
-            onSelect={() => setSelectedAnswer(index)}
-          />
-        ))}
+        <View style={styles.answerGrid}>
+          {placeholderQuestions[currentQuestion].answers.map((answer, index) => (
+            <AnswerOption
+              key={index}
+              label={String.fromCharCode(65 + index)}
+              answer={answer}
+              isSelected={selectedAnswer === index}
+              onSelect={() => setSelectedAnswer(index)}
+            />
+          ))}
+        </View>
       </View>
 
       {/* Navigation Buttons */}
@@ -128,76 +153,123 @@ export const QuizPage: React.FC<QuizPageProps> = ({
           style={[styles.navButton, styles.nextButton]}
           onPress={handleNext}
         >
-          <Text style={styles.navButtonText}>Next</Text>
-          <Feather name="chevron-right" size={20} color="white" />
+          <Text style={[styles.navButtonText, styles.nextButtonText]}>Next</Text>
+          <Feather name="chevron-right" size={20} color="#00B074" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00B074',
+    backgroundColor: '#009D60',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
+    marginTop: 32,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'Poppins_600SemiBold',
     color: 'white',
   },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 20, // Ensures circular shape
+    justifyContent: 'center',
+    alignItems: 'center',
+  },  
   progressSection: {
+    padding: 16,
+    marginBottom: 4,
+  },
+  progressInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 24,
+    marginBottom: 8,
+    paddingHorizontal: 6,
   },
+  progressContent: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%', // Ensure it occupies the full width
+  },  
   questionCount: {
     fontSize: 16,
+    fontFamily: 'Poppins_400Regular',
     color: 'white',
-    marginBottom: 8,
+  },
+  questionTotal: {
+    fontSize: 16,
+    fontFamily: 'Poppins_400Regular',
+    color: 'white',
+  },
+  timerSection: {
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   timerContainer: {
     backgroundColor: '#FFB800',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    height: 40,
+    borderWidth: 2,
+    borderColor: 'black',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 100,
+    marginHorizontal: 16,
+    marginBottom: 12,
   },
   timer: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#000',
   },
   questionContainer: {
     padding: 16,
-    marginBottom: 24,
+    paddingTop: 40,
+    marginBottom: 8,
   },
   mascot: {
-    width: 100,
-    height: 100,
-    marginBottom: 16,
+    width: 120,
+    height: 120,
+    position: 'relative',
+    left: 16,
+    top: 0,
   },
   questionText: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 30,
+    fontFamily: 'Poppins_600SemiBold',
     color: 'white',
-    lineHeight: 32,
+    paddingHorizontal: 8,
+    lineHeight: 40,
   },
   answersContainer: {
     padding: 16,
     flex: 1,
   },
+  answerGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
   chooseText: {
     fontSize: 16,
+    fontFamily: 'Poppins_400Regular',
     color: 'white',
-    marginBottom: 16,
+    marginLeft: 12,
+    marginBottom: 24,
+    opacity: 0.7,
   },
   navigation: {
     flexDirection: 'row',
@@ -211,6 +283,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingVertical: 12,
     paddingHorizontal: 16,
+    borderWidth: 2,
+    borderColor: 'white',
     borderRadius: 100,
   },
   navButtonDisabled: {
@@ -221,9 +295,12 @@ const styles = StyleSheet.create({
   },
   navButtonText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'Poppins_400Regular',
     color: 'white',
     marginHorizontal: 8,
+  },
+  nextButtonText: {
+    color: '#009D60',
   },
 });
 
