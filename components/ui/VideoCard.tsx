@@ -23,7 +23,13 @@ export const VideoCard = ({ title, videoUrl, isWatched, onWatch }: VideoCardProp
     <View style={styles.videoCard}>
       <View style={styles.header}>
         <Text style={styles.videoTitle}>Judul</Text>
-        <Text style={styles.videoContent}>{title}</Text>
+        <Text
+          style={styles.videoContent}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {title}
+        </Text>
       </View>
       <View style={styles.videoCardBottom}>
         <AntDesign
@@ -54,9 +60,9 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingHorizontal: 20,
     width: 260,
-    height: 140,
+    height: 150,
     marginRight: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   header: {
     marginBottom: 16,

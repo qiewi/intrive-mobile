@@ -77,7 +77,7 @@ export default function QuizPage() {
   };
 
   const handleClose = () => {
-    router.back();
+    router.push('/module-detail');
   };
 
   return (
