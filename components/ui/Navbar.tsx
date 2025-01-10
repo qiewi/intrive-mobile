@@ -30,7 +30,7 @@ export const Navbar = ({ activeTab }: NavbarProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navItem, activeTab === 'leaderboard' && styles.navItemActive]}
-          onPress={() => router.push('/home')}
+          onPress={() => router.push('/leaderboard')}
         >
           <Feather name="award" size={24} color={activeTab === 'leaderboard' ? 'white' : '#666'} />
           <Text
