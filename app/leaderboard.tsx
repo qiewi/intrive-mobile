@@ -39,55 +39,57 @@ export default function Leaderboard() {
 
       {/* Podium Section */}
       <View style={styles.podiumSection}>
-      <View style={styles.podiumContainer}>
-        {topUsers.map((user) => (
+        <View style={styles.podiumContainer}>
+          {topUsers.map((user) => (
             <View key={user.id} style={styles.podiumColumn}>
-            {/* Profile and Info */}
-            <Image
+              {/* Profile and Info */}
+              <Image
                 source={require('../assets/images/avatar.png')}
                 style={[
-                styles.avatar,
-                {
+                  styles.avatar,
+                  {
                     marginBottom: user.position === 1 ? 8 : user.position === 2 ? 8 : 8,
-                },
+                  },
                 ]}
-            />
-            <GlobalText style={styles.userName}>{user.name}</GlobalText>
-            <GlobalText
+              />
+              <GlobalText style={styles.userName}>{user.name}</GlobalText>
+              <GlobalText
                 style={[
-                styles.userXP,
-                { color:
-                    user.position === 1
+                  styles.userXP,
+                  {
+                    color:
+                      user.position === 1
                         ? '#009D60'
                         : user.position === 2
                         ? '#E5B700'
-                        : '#F7CA15', },
+                        : '#F7CA15',
+                  },
                 ]}
-            >
+              >
                 {user.xp} XP
-            </GlobalText>
+              </GlobalText>
 
-            {/* Podium Box */}
-            <View
+              {/* Podium Box */}
+              <View
                 style={[
-                    styles.podiumBox,
-                    {
-                        height: user.position === 1 ? 160 : user.position === 2 ? 140 : 120,
-                        backgroundColor:
-                            user.position === 1
-                                ? '#009D60'
-                                : user.position === 2
-                                ? '#E5B700'
-                                : '#F7CA15',
-                    },
+                  styles.podiumBox,
+                  {
+                    height: user.position === 1 ? 160 : user.position === 2 ? 140 : 120,
+                    backgroundColor:
+                      user.position === 1
+                        ? '#009D60'
+                        : user.position === 2
+                        ? '#E5B700'
+                        : '#F7CA15',
+                  },
                 ]}
-            >
+              >
                 <View style={styles.positionBadge}>
-                <GlobalText style={styles.positionText}>{user.position}</GlobalText>
+                  <GlobalText style={styles.positionText}>{user.position}</GlobalText>
                 </View>
+              </View>
             </View>
-            </View>
-        ))}
+          ))}
         </View>
       </View>
 
@@ -96,10 +98,20 @@ export default function Leaderboard() {
         {otherUsers.map((user, index) => (
           <View key={index} style={styles.listItem}>
             <View style={styles.listLeftSection}>
-              <Image
-                source={require('../assets/images/avatar.png')}
-                style={styles.listAvatar}
-              />
+              <View style={styles.avatarWrapper}>
+                <Image
+                  source={require('../assets/images/avatar.png')}
+                  style={styles.listAvatar}
+                />
+                <View
+                  style={[
+                    styles.smallBadge,
+                    { backgroundColor: index % 2 === 0 ? '#009D60' : '#F7CA15' },
+                  ]}
+                >
+                  <GlobalText style={styles.smallBadgeText}>{index + 4}</GlobalText>
+                </View>
+              </View>
               <View style={styles.listContent}>
                 <GlobalText style={styles.listName}>{user.name}</GlobalText>
                 <GlobalText style={styles.listStreaks}>{user.streaks}</GlobalText>
@@ -148,14 +160,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '50%',
   },
-  podiumContent: {
-    alignItems: 'center',
-  },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginBottom: 4,
+  },
+  avatarWrapper: {
+    position: 'relative',
+  },
+  smallBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#000000',
+  },
+  smallBadgeText: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 10,
+    color: '#FFFFFF',
   },
   userName: {
     fontFamily: 'Poppins_600SemiBold',
