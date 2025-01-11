@@ -13,6 +13,7 @@ import { auth } from './firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { FontAwesome } from '@expo/vector-icons';
+import { Image } from 'react-native';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -50,6 +51,8 @@ export default function SignUpScreen() {
       if (user) {
         await updateProfile(user, { displayName: username });
 
+        const defaultProfilePic = require('../assets/images/profpic.png');
+
         await setDoc(doc(db, 'users', user.uid), {
           username: username,
           email: user.email,
@@ -66,6 +69,7 @@ export default function SignUpScreen() {
             { id: 7, title: 'Problem Solver', unlocked: false },
             { id: 8, title: 'Area Analyzer', unlocked: false },
           ],
+          profilePic: defaultProfilePic,
         });
       }
 

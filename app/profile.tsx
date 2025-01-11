@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
 import { doc, getDoc, Firestore } from "firebase/firestore";
+import * as ImagePicker from 'expo-image-picker';
 
 type Badge = {
   id: number;
@@ -42,6 +43,8 @@ const ProfileScreen = () => {
     badges: [],
   });
 
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+
   const fetchUserData = async () => {
     try {
       const docRef = doc(firestore, "users", auth.currentUser?.uid || "");
@@ -64,6 +67,24 @@ const ProfileScreen = () => {
     }
   }, []);
 
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted) {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const selectedImage = result.assets[0];
+        setProfilePic(selectedImage.uri);
+      }
+    } else {
+      alert("Permission to access media library is required!");
+    }
+  };  
+
   if (!fontsLoaded) {
     return null;
   }
@@ -81,7 +102,16 @@ const ProfileScreen = () => {
 
       {/* Profile Section */}
       <View style={styles.profileSection}>
-        <Image source={require('../assets/images/avatar.png')} style={styles.avatar} />
+        {/* Profile Picture with Change Button */}
+        <View style={styles.avatarContainer}>
+          <Image 
+            source={profilePic ? { uri: profilePic } : require('../assets/images/profpic.png')} 
+            style={styles.avatar} 
+          />
+          <TouchableOpacity style={styles.changePicButton} onPress={pickImage}>
+            <Icon name="camera" style={styles.changePicIcon} />
+          </TouchableOpacity>
+        </View>
         <Text style={[styles.username, { fontFamily: 'Poppins_600SemiBold' }]}>{auth.currentUser?.displayName || 'User'}</Text>
         <Text style={[styles.handle, { fontFamily: 'Poppins_400Regular' }]}>{auth.currentUser?.email || 'email@example.com'}</Text>
         
@@ -163,10 +193,7 @@ const ProfileScreen = () => {
                   </View>
                   {/* Badge Title */}
                   <Text
-                    style={[
-                      styles.badgeTitle,
-                      { color: badge.unlocked ? '#000' : '#A0A0A0' },
-                    ]}
+                    style={[styles.badgeTitle, { color: badge.unlocked ? '#000' : '#A0A0A0' }]}
                   >
                     {badge.title}
                   </Text>
@@ -200,11 +227,31 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     paddingHorizontal: 20,
   },
+  avatarContainer: {
+    position: 'relative',
+  },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
     marginBottom: 10,
+  },
+  changePicButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: 'white',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  changePicIcon: {
+    fontSize: 16,
+    color: 'black',
   },
   username: {
     color: 'white',
