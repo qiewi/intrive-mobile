@@ -242,7 +242,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    marginTop: 32,
   },
   headerTitle: {
     fontSize: 18,
@@ -307,12 +306,10 @@ const styles = StyleSheet.create({
   questionContainer: {
     padding: 16,
     paddingBottom: 4,
-    paddingTop: 16,
   },
   mascot: {
     width: 120,
     height: 120,
-    marginBottom: 16,
   },
   questionText: {
     fontSize: 24,
