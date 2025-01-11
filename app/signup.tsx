@@ -11,9 +11,11 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const db = getFirestore();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -38,15 +40,24 @@ export default function SignUpScreen() {
       Alert.alert('Error', 'All fields are required!');
       return;
     }
-
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+  
       if (user) {
         await updateProfile(user, { displayName: username });
+  
+        await setDoc(doc(db, 'users', user.uid), {
+          username: username,
+          email: user.email,
+          streaks: 0,
+          level: 'Beginner',
+          points: 0,
+          badges: [],
+        });
       }
-
+  
       Alert.alert('Success', 'Account created successfully!');
       router.push('/signin');
     } catch (error: any) {
@@ -56,7 +67,7 @@ export default function SignUpScreen() {
         Alert.alert('Error', 'The email address is already registered. Please use a different email.');
       }
     }
-  };
+  };  
 
   return (
     <View style={styles.container}>
