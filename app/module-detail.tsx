@@ -37,7 +37,10 @@ export default function ModuleDetail() {
   };
 
   const StartQuiz = () => {
-    router.push({ pathname: '/quiz-page', params: { id: moduleData.id } }); // Pass module id to the quiz-page
+    router.push({
+      pathname: '/quiz-page',
+      params: { id: moduleData.id, type }, // Pass both id and type
+    });
   };
 
   return (
