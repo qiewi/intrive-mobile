@@ -14,11 +14,17 @@ import { useRouter } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
 import { doc, getDoc, Firestore } from "firebase/firestore";
 
+type Badge = {
+  id: number;
+  title: string;
+  unlocked: boolean;
+};
+
 type UserData = {
   level: string;
   points: number;
   streaks: number;
-  badges: string[];
+  badges: Badge[];
 };
 
 const ProfileScreen = () => {
@@ -61,19 +67,6 @@ const ProfileScreen = () => {
   if (!fontsLoaded) {
     return null;
   }
-
-  const badges = [
-    { id: 1, title: 'Super\nStar' },
-    { id: 2, title: 'Quiz\nChampion' },
-    { id: 3, title: 'Math Wiz\nKid' },
-    { id: 4, title: 'Science \nGang' },
-    { id: 5, title: 'Language Master' },
-    { id: 6, title: 'Tech Guru' },
-    { id: 7, title: 'Sports Enthusiast' },
-    { id: 8, title: 'Art Creator' },
-    { id: 9, title: 'Music Lover' },
-    { id: 10, title: 'Adventure Seeker' },
-  ];
 
   const BackToPreviousPage = () => {
     router.back();
@@ -153,14 +146,28 @@ const ProfileScreen = () => {
         <View style={styles.badgesSection}>
             <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Badges</Text>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                <View style={styles.badgesGrid}>
-                {badges.map((badge) => (
-                    <View key={badge.id} style={styles.badgeContainer}>
-                    <Image source={require('../assets/images/badge.png')} style={styles.badgeIcon} />
-                    <Text style={[styles.badgeTitle, { fontFamily: 'Poppins_400Regular' }]}>{badge.title}</Text>
-                    </View>
+              <View style={styles.badgesGrid}>
+                {profileData.badges.map((badge) => (
+                  <View key={badge.id} style={styles.badgeContainer}>
+                    <Image
+                      source={
+                        badge.unlocked
+                          ? require('../assets/images/badge.png')
+                          : require('../assets/images/badge.png')
+                      }
+                      style={[styles.badgeIcon, !badge.unlocked && { opacity: 0.5 }]}
+                    />
+                    <Text
+                      style={[
+                        styles.badgeTitle,
+                        { fontFamily: 'Poppins_400Regular', color: badge.unlocked ? '#000' : '#A0A0A0' },
+                      ]}
+                    >
+                      {badge.title}
+                    </Text>
+                  </View>
                 ))}
-                </View>
+              </View>
             </ScrollView>
         </View>
       </View>
