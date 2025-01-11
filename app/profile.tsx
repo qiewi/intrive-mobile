@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,15 @@ import {
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
-import { auth } from './firebaseConfig';
+import { auth, firestore } from './firebaseConfig';
+import { doc, getDoc, Firestore } from "firebase/firestore";
+
+type UserData = {
+  level: string;
+  points: number;
+  streaks: number;
+  badges: string[];
+};
 
 const ProfileScreen = () => {
   const router = useRouter();
@@ -20,6 +28,35 @@ const ProfileScreen = () => {
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
+
+  const [profileData, setProfileData] = useState<UserData>({
+    level: "",
+    points: 0,
+    streaks: 0,
+    badges: [],
+  });
+
+  const fetchUserData = async () => {
+    try {
+      const docRef = doc(firestore, "users", auth.currentUser?.uid || "");
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const data = docSnap.data() as UserData;
+        setProfileData(data);
+      } else {
+        console.log("Document not Found!");
+      }
+    } catch (error) {
+      console.error("Error fetching data user:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      fetchUserData();
+    }
+  }, []);
 
   if (!fontsLoaded) {
     return null;
@@ -61,11 +98,11 @@ const ProfileScreen = () => {
             <Text style={[styles.progressTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Level Progress</Text>
             <View style={styles.pxContainer}>
                 <Icon name="star" style={styles.pxIcon} />
-                <Text style={[styles.pxText, { fontFamily: 'Poppins_400Regular' }]}>373 PX</Text>
+                <Text style={[styles.pxText, { fontFamily: 'Poppins_400Regular' }]}>{profileData.points} PX</Text>
             </View>
           </View>
           <View style={styles.progressBar}>
-            <View style={[styles.progress, { width: '34%' }]} />
+            <View style={[styles.progress, { width: `${Math.min(profileData.points / 1000 * 100, 100)}%` }]} />
           </View>
         </View>
       </View>
@@ -77,7 +114,7 @@ const ProfileScreen = () => {
             <View style={styles.streakContent}>
                 <View style={styles.streakTextContainer}>
                 <Text style={[styles.streakLabel, { fontFamily: 'Poppins_400Regular' }]}>You did</Text>
-                <Text style={[styles.streakCount, { fontFamily: 'Poppins_600SemiBold' }]}>6 streaks</Text>
+                <Text style={[styles.streakCount, { fontFamily: 'Poppins_600SemiBold' }]}>{profileData.streaks} streaks</Text>
                 </View>
                 <View style={styles.streakImageContainer}>
                 <Image source={require('../assets/images/streakImage.png')} style={styles.streakImage} />
@@ -92,14 +129,14 @@ const ProfileScreen = () => {
             <Image source={require('../assets/images/level.png')} style={styles.statusIcon} />
             <View>
               <Text style={[styles.statusLabel, { fontFamily: 'Poppins_400Regular' }]}>Level</Text>
-              <Text style={[styles.statusValue, { fontFamily: 'Poppins_600SemiBold' }]}>Bronze</Text>
+              <Text style={[styles.statusValue, { fontFamily: 'Poppins_600SemiBold' }]}>{profileData.level}</Text>
             </View>
           </View>
           <View style={styles.statusCard}>
             <Image source={require('../assets/images/points.png')} style={styles.statusIcon} />
             <View>
               <Text style={[styles.statusLabel, { fontFamily: 'Poppins_400Regular' }]}>Points</Text>
-              <Text style={[styles.statusValue, { fontFamily: 'Poppins_600SemiBold' }]}>373</Text>
+              <Text style={[styles.statusValue, { fontFamily: 'Poppins_600SemiBold' }]}>{profileData.points}</Text>
             </View>
           </View>
         </View>
@@ -108,7 +145,7 @@ const ProfileScreen = () => {
         <View style={styles.levelSection}>
           <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Level Progress</Text>
           <View style={styles.levelProgressBar}>
-            <View style={[styles.levelProgress, { width: '34%' }]} />
+            <View style={[styles.levelProgress, { width: `${Math.min(profileData.points / 1000 * 100, 100)}%` }]} />
           </View>
         </View>
 

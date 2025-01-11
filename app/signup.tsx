@@ -52,7 +52,7 @@ export default function SignUpScreen() {
           username: username,
           email: user.email,
           streaks: 0,
-          level: 'Beginner',
+          level: 'Bronze',
           points: 0,
           badges: [],
         });
