@@ -3,7 +3,7 @@
     "name": "intrive-mobile",
     "slug": "intrive-mobile",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/splash.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
@@ -17,6 +17,7 @@
       }
     },
     "android": {
+      "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#00824F"

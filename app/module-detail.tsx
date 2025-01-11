@@ -21,8 +21,8 @@ export default function ModuleDetail() {
 
   if (!fontsLoaded || !moduleData) return null; // Render nothing until fonts are loaded
 
-  const handleWatch = () => {
-
+  const handleWatch = (videoUrl: string) => {
+    router.push({ pathname: '/video-page', params: { videoUrl } }); // Navigate to VideoPage with video URL
   };
 
   const BackToHome = () => {
@@ -70,7 +70,7 @@ export default function ModuleDetail() {
             title={video.title}
             videoUrl={video.url}
             isWatched={false}
-            onWatch={() => handleWatch()}
+            onWatch={() => handleWatch(video.url)} // Pass video URL to the handler
           />
         ))}
       </ScrollView>

@@ -41,7 +41,6 @@ export const VideoCard = ({ title, videoUrl, isWatched, onWatch }: VideoCardProp
           style={styles.watchButton}
           onPress={() => {
             onWatch && onWatch();
-            Linking.openURL(videoUrl);
           }}
         >
           <Text style={styles.watchButtonText}>Watch</Text>

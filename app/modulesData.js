@@ -8,8 +8,8 @@ export const modules = [
       status: 'incomplete',
       topic: 'Hubungannya dengan Notasi Sigma',
       videos: [
-        { id: '1', title: 'Apa Hubungannya dengan Notasi Sigma?', url: 'https://example.com/video1' },
-        { id: '2', title: 'Apa Hubungannya dengan Notasi Sigma? (Part 2)', url: 'https://example.com/video2' },
+        { id: '1', title: 'Apa Hubungannya dengan Notasi Sigma?', url: 'https://www.youtube.com/watch?v=Pc8R5Y3C7CY' },
+        { id: '2', title: 'Apa Hubungannya dengan Notasi Sigma? (Part 2)', url: 'https://www.youtube.com/watch?v=M9-amTqnw9M' },
       ],
       userScore: 0,
     },

@@ -108,7 +108,7 @@ export default function Home() {
         {/* Latest Quiz Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Available Modules</Text>
+            <Text style={styles.sectionTitle}>Modules</Text>
           </View>
           {filteredModules.map((module) => (
             <QuizListItem
