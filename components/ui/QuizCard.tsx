@@ -1,14 +1,18 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
 interface QuizCardProps {
+  id: string;
+  type: 'integralModules' | 'derivativeModules';
   title: string;
   level: number;
   image: any; // Use `any` for require() image type
-  onPress?: () => void;
 }
 
-export const QuizCard = ({ title, level, image, onPress }: QuizCardProps) => {
+export const QuizCard = ({ id, type, title, level, image }: QuizCardProps) => {
+  const router = useRouter();
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
@@ -16,8 +20,12 @@ export const QuizCard = ({ title, level, image, onPress }: QuizCardProps) => {
 
   if (!fontsLoaded) return null;
 
+  const handleNavigation = () => {
+    router.push(`/module-detail?id=${id}&type=${type}`);
+  };
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity style={styles.card} onPress={handleNavigation}>
       <View style={styles.content}>
         {/* Title and Level */}
         <Text style={styles.title}>{title}</Text>
@@ -34,7 +42,7 @@ export const QuizCard = ({ title, level, image, onPress }: QuizCardProps) => {
         </View>
 
         {/* Button */}
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleNavigation}>
           <Text style={styles.buttonText}>Let's Go</Text>
         </TouchableOpacity>
       </View>

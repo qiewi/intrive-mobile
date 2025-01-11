@@ -97,9 +97,11 @@ export default function Home() {
           {allModules.map((module) => (
             <QuizCard
               key={module.id}
+              id={module.id}
+              type={module.type === 'integral' ? 'integralModules' : 'derivativeModules'} 
               title={module.title}
               level={module.level}
-              image={require('../assets/quiz/1.png')} // Replace with dynamic images if available
+              image={require('../assets/quiz/1.png')} 
             />
           ))}
         </ScrollView>
