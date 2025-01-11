@@ -12,6 +12,8 @@ import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -26,6 +28,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!fontsLoaded) {
     return null;
@@ -40,14 +43,14 @@ export default function SignUpScreen() {
       Alert.alert('Error', 'All fields are required!');
       return;
     }
-  
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-  
+
       if (user) {
         await updateProfile(user, { displayName: username });
-  
+
         await setDoc(doc(db, 'users', user.uid), {
           username: username,
           email: user.email,
@@ -64,19 +67,19 @@ export default function SignUpScreen() {
             { id: 7, title: 'Problem Solver', unlocked: false },
             { id: 8, title: 'Area Analyzer', unlocked: false },
           ],
-        });        
+        });
       }
-  
+
       Alert.alert('Success', 'Account created successfully!');
       router.push('/signin');
-    } catch (error: any) {
-      if (error.code === 'auth/email-already-in-use') {
-        Alert.alert('Error', 'The email address is already registered. Please use a different email.');
-      } else {
-        Alert.alert('Error', 'The email address is already registered. Please use a different email.');
+      } catch (error: any) {
+        if (error.code === 'auth/email-already-in-use') {
+          Alert.alert('Error', 'The email address is already registered. Please use a different email.');
+        } else {
+          Alert.alert('Error', error.message || 'An unknown error occurred.');
+        }
       }
-    }
-  };  
+  };
 
   return (
     <View style={styles.container}>
@@ -109,14 +112,19 @@ export default function SignUpScreen() {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your password"
-            secureTextEntry
-            placeholderTextColor="#A0A0A0"
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Enter your password"
+              secureTextEntry={!showPassword}
+              placeholderTextColor="#A0A0A0"
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.iconContainer}>
+              <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} size="lg" color="#A0A0A0" />
+            </TouchableOpacity>
+          </View>
         </View>
         <TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
           <Text style={styles.loginButtonText}>Create Account</Text>
@@ -187,6 +195,26 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: 16,
     paddingVertical: 20,
+  },
+  passwordInputContainer: {
+    position: 'relative',
+  },
+  passwordInput: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 16,
+    color: '#000000',
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    width: '100%',
+  },
+  iconContainer: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    transform: [{ translateY: -10 }],
   },
   loginButton: {
     backgroundColor: '#F7CA15',
