@@ -11,6 +11,7 @@ import { WebView } from 'react-native-webview';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
 export default function VideoPage() {
   const router = useRouter();
@@ -32,6 +33,11 @@ export default function VideoPage() {
 
   const embedUrl = getEmbedUrl(url);
 
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+  });
+
   useEffect(() => {
     // Lock the screen orientation to landscape
     const lockOrientation = async () => {
@@ -50,6 +56,8 @@ export default function VideoPage() {
     };
   }, []);
 
+  if (!fontsLoaded) return null;
+
   if (!embedUrl) {
     return (
       <SafeAreaView style={styles.container}>
@@ -67,6 +75,7 @@ export default function VideoPage() {
         <TouchableOpacity onPress={() => router.back()}>
           <AntDesign name="left" size={24} color="black" />
         </TouchableOpacity>
+        <Text style={styles.headerText}>Back</Text>
       </View>
 
       {/* Video Content */}
@@ -101,7 +110,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    gap: 16,
+  },
+  headerText: {
+    fontSize: 24,
+    fontFamily: 'Poppins_600SemiBold', // Apply Poppins SemiBold to header text
+    color: '#000',
   },
   webFallback: {
     flex: 1,
@@ -118,6 +132,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
+    fontFamily: 'Poppins_400Regular', // Apply Poppins Regular to error text
     color: 'red',
   },
 });
