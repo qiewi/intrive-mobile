@@ -3,34 +3,26 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { AntDesign } from '@expo/vector-icons';
 import { VideoCard } from '../components/ui/VideoCard';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { modules } from './modulesData';
 
 export default function ModuleDetail() {
+  const { id } = useLocalSearchParams(); // Get the `id` from the URL
   const router = useRouter();
-  const [watchedVideos, setWatchedVideos] = useState(new Set());
+
+  const moduleData = modules.find((module) => module.id === id); // Find the module data by ID
+
+  const [watchedVideos, setWatchedVideos] = useState(new Set(moduleData?.videos.map(() => false)));
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
 
-  if (!fontsLoaded) return null; // Render nothing until fonts are loaded
-
-  const videos = [
-    {
-      id: '1',
-      title: 'Apa Hubungannya dengan Notasi Sigma?',
-      url: 'https://example.com/video1',
-    },
-    {
-      id: '2',
-      title: 'Apa Hubungannya dengan Notasi Sigma? (Part 2)',
-      url: 'https://example.com/video2',
-    },
-  ];
+  if (!fontsLoaded || !moduleData) return null; // Render nothing until fonts are loaded
 
   const handleWatch = (videoId: string) => {
-    setWatchedVideos((prev) => new Set([...prev, videoId]));
+    
   };
 
   const BackToHome = () => {
@@ -48,36 +40,36 @@ export default function ModuleDetail() {
         <TouchableOpacity style={styles.backButton} onPress={BackToHome}>
           <AntDesign name="left" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Integral Tentu</Text>
+        <Text style={styles.headerTitle}>{moduleData.title}</Text>
       </View>
 
       {/* Level and Status */}
       <View style={styles.levelContainer}>
         <View style={styles.levelBadge}>
           <Text style={styles.levelText}>Level</Text>
-          <Text style={[styles.levelText, styles.levelNumber]}>2</Text>
+          <Text style={[styles.levelText, styles.levelNumber]}>{moduleData.level}</Text>
         </View>
         <View style={styles.statusBadge}>
           <Text style={styles.statusText}>Status</Text>
-          <Text style={styles.statusValue}>Incomplete</Text>
+          <Text style={styles.statusValue}>{moduleData.status}</Text>
         </View>
       </View>
 
       {/* Topic */}
       <View style={styles.topicContainer}>
         <Text style={styles.topicLabel}>Topic</Text>
-        <Text style={styles.topicTitle}>Hubungannya dengan Notasi Sigma</Text>
+        <Text style={styles.topicTitle}>{moduleData.topic}</Text>
       </View>
 
       {/* Video Material */}
       <Text style={styles.sectionTitle}>Video Material</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.videoScroll}>
-        {videos.map((video) => (
+        {moduleData.videos.map((video) => (
           <VideoCard
             key={video.id}
             title={video.title}
             videoUrl={video.url}
-            isWatched={watchedVideos.has(video.id)}
+            isWatched={false}
             onWatch={() => handleWatch(video.id)}
           />
         ))}
@@ -87,11 +79,11 @@ export default function ModuleDetail() {
       <View style={styles.scoreContainer}>
         <View style={styles.scoreDetail}>
           <Text style={styles.scoreText}>Your Last Score</Text>
-          <Text style={styles.scoreValue}>2/5</Text>
+          <Text style={styles.scoreValue}>{moduleData.userScore}/5</Text>
         </View>
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
-            <View style={styles.progress} />
+            <View style={[styles.progress, { width: `${(moduleData.userScore / 5) * 100}%` }]} />
           </View>
         </View>
       </View>
@@ -103,6 +95,7 @@ export default function ModuleDetail() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
