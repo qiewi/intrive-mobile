@@ -16,8 +16,8 @@ import { Navbar } from '../components/ui/Navbar';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
-import { integralModules } from './integralModules';
-import { derivativeModules } from './derivativeModules';
+import { integralModules } from './data/integralModules';
+import { derivativeModules } from './data/derivativeModules';
 
 export default function Home() {
   const router = useRouter();

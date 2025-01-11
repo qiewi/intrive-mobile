@@ -13,10 +13,10 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { AnswerOption } from '../components/ui/AnswerOption';
 import { ProgressDots } from '../components/ui/ProgressDots';
 import { ResultScreen } from '../components/ui/ResultScreen';
-import { integralModules } from './integralModules';
-import { derivativeModules } from './derivativeModules';
-import { integralQuizzes } from './integralQuizzes';
-import { derivativeQuizzes } from './derivativeQuizzes';
+import { integralModules } from './data/integralModules';
+import { derivativeModules } from './data/derivativeModules';
+import { integralQuizzes } from './data/integralQuizzes';
+import { derivativeQuizzes } from './data/derivativeQuizzes';
 import type { Module, Quiz } from './types/quiz';
 
 interface Answer {
