@@ -8,35 +8,19 @@ import {
   Image,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { AnswerOption } from '../components/ui/AnswerOption';
 import { ProgressDots } from '../components/ui/ProgressDots';
-
-// Types
-interface Question {
-  question: string;
-  answers: string[];
-  correctAnswer: number;
-}
-
-// Placeholder data
-const placeholderQuestions: Question[] = [
-  {
-    question: "Gunakan Teorema Dasar Kalkulus untuk menemukan turunan dasar dari fungsi F(x) = ∫ₓ sin(t²) dt.",
-    answers: ["sin(x²)", "cos(x²)", "2x sin(x²)", "-sin(x²)"],
-    correctAnswer: 0,
-  },
-  {
-    question: "Gunakan Teorema Dasar Kalkulus untuk menemukan turunan dasar dari fungsi F(x) = ∫ₓ sin(t²) dt.",
-    answers: ["sin(x²)", "cos(x²)", "2x sin(x²)", "-sin(x²)"],
-    correctAnswer: 0,
-  },
-  // Add more placeholder questions as needed
-];
+import { quizzes } from './quizData';
 
 export default function QuizPage() {
   const router = useRouter();
+  const { id } = useLocalSearchParams(); // Get the `id` from the URL
+  const quizData = quizzes.find((quiz) => quiz.id === id); // Find the quiz data by ID
+
+  if (!quizData) return null; // If quiz not found, return null
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
@@ -70,14 +54,14 @@ export default function QuizPage() {
   };
 
   const handleNext = () => {
-    if (currentQuestion < placeholderQuestions.length - 1) {
+    if (currentQuestion < quizData.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
     }
   };
 
   const handleClose = () => {
-    router.push('/module-detail');
+    router.back();
   };
 
   return (
@@ -85,49 +69,44 @@ export default function QuizPage() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.iconButton} onPress={handleClose}>
-            <Feather name="arrow-left" size={20} color="white" />
+          <Feather name="arrow-left" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Integral Quiz</Text>
+        <Text style={styles.headerTitle}>Quiz</Text>
         <TouchableOpacity style={styles.iconButton}>
-            <Feather name="grid" size={20} color="white" />
+          <Feather name="grid" size={20} color="white" />
         </TouchableOpacity>
       </View>
-
 
       {/* Progress Section */}
       <View style={styles.progressSection}>
         <View style={styles.progressInfo}>
           <Text style={styles.questionCount}>Question {currentQuestion + 1}</Text>
-          <Text style={styles.questionTotal}>{currentQuestion + 1} of {placeholderQuestions.length}</Text>
+          <Text style={styles.questionTotal}>
+            {currentQuestion + 1} of {quizData.questions.length}
+          </Text>
         </View>
         <View style={styles.progressContent}>
-          <ProgressDots total={placeholderQuestions.length} current={currentQuestion + 1} />
-          
+          <ProgressDots total={quizData.questions.length} current={currentQuestion + 1} />
         </View>
       </View>
 
       <View style={styles.timerSection}>
-        <Image
-          source={require('../assets/quiz/1.png')}
-          style={styles.mascot}
-        />
+        <Image source={require('../assets/quiz/1.png')} style={styles.mascot} />
         <View style={styles.timerContainer}>
-                <Text style={styles.timer}>{formatTime(timeLeft)}</Text>
+          <Text style={styles.timer}>{formatTime(timeLeft)}</Text>
         </View>
       </View>
-      
-      {/* Mascot and Question */}
+
+      {/* Question */}
       <View style={styles.questionContainer}>
-        <Text style={styles.questionText}>
-          {placeholderQuestions[currentQuestion].question}
-        </Text>
+        <Text style={styles.questionText}>{quizData.questions[currentQuestion].question}</Text>
       </View>
 
       {/* Answer Options */}
       <View style={styles.answersContainer}>
         <Text style={styles.chooseText}>Choose your answer</Text>
         <View style={styles.answerGrid}>
-          {placeholderQuestions[currentQuestion].answers.map((answer, index) => (
+          {quizData.questions[currentQuestion].answers.map((answer, index) => (
             <AnswerOption
               key={index}
               label={String.fromCharCode(65 + index)}
@@ -154,7 +133,7 @@ export default function QuizPage() {
           onPress={handleNext}
         >
           <Text style={[styles.navButtonText, styles.nextButtonText]}>Next</Text>
-          <Feather name="chevron-right" size={20} color="#00B074" />
+          <Feather name="chevron-right" size={20} color="#009D60" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -237,6 +216,8 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 4,
     paddingTop: 16,
+    height: 5 * 40, // 5 lines * lineHeight (40 from questionText)
+    marginBottom: 16,
   },
   mascot: {
     width: 120,
@@ -250,7 +231,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
     color: 'white',
     paddingHorizontal: 8,
-    lineHeight: 40,
+    lineHeight: 40, // Set lineHeight to ensure spacing between lines
   },
   answersContainer: {
     padding: 16,

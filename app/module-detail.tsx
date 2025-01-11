@@ -21,8 +21,8 @@ export default function ModuleDetail() {
 
   if (!fontsLoaded || !moduleData) return null; // Render nothing until fonts are loaded
 
-  const handleWatch = (videoId: string) => {
-    
+  const handleWatch = () => {
+
   };
 
   const BackToHome = () => {
@@ -30,7 +30,7 @@ export default function ModuleDetail() {
   };
 
   const StartQuiz = () => {
-    router.push('/quiz-page');
+    router.push({ pathname: '/quiz-page', params: { id: moduleData.id } }); // Pass module id to the quiz-page
   };
 
   return (
@@ -70,7 +70,7 @@ export default function ModuleDetail() {
             title={video.title}
             videoUrl={video.url}
             isWatched={false}
-            onWatch={() => handleWatch(video.id)}
+            onWatch={() => handleWatch()}
           />
         ))}
       </ScrollView>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
   },
   topicTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'Poppins_600SemiBold',
   },
   sectionTitle: {
