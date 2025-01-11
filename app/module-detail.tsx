@@ -4,22 +4,29 @@ import { AntDesign } from '@expo/vector-icons';
 import { VideoCard } from '../components/ui/VideoCard';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { modules } from './modulesData';
+import { integralModules } from './integralModules';
+import { derivativeModules } from './derivativeModules';
 
 export default function ModuleDetail() {
-  const { id } = useLocalSearchParams(); // Get the `id` from the URL
+  const { id, type } = useLocalSearchParams(); // Get the `id` and `type` from the URL
   const router = useRouter();
 
-  const moduleData = modules.find((module) => module.id === id); // Find the module data by ID
+  // Determine the correct module data based on `type`
+  const moduleData =
+    type === 'integralModules'
+      ? integralModules.find((module) => module.id === id)
+      : derivativeModules.find((module) => module.id === id);
 
-  const [watchedVideos, setWatchedVideos] = useState(new Set(moduleData?.videos.map(() => false)));
+  if (!moduleData) return null; // If no matching module is found, return null
+
+  const [watchedVideos, setWatchedVideos] = useState(new Set(moduleData.videos.map(() => false)));
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
 
-  if (!fontsLoaded || !moduleData) return null; // Render nothing until fonts are loaded
+  if (!fontsLoaded) return null; // Render nothing until fonts are loaded
 
   const handleWatch = (videoUrl: string) => {
     router.push({ pathname: '/video-page', params: { videoUrl } }); // Navigate to VideoPage with video URL
@@ -96,7 +103,6 @@ export default function ModuleDetail() {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -168,7 +174,6 @@ const styles = StyleSheet.create({
   },
   topicContainer: {
     backgroundColor: '#F5F5F5',
-    width: 350,
     height: 128,
     padding: 20,
     borderRadius: 20,
@@ -189,7 +194,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   videoScroll: {
-    marginBottom: 10, // Increased spacing to bring up the score section
+    marginBottom: 10,
   },
   scoreContainer: {
     marginBottom: 40,
@@ -218,7 +223,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   progress: {
-    width: '40%', // Adjust width dynamically based on score
     height: '100%',
     borderWidth: 2,
     borderColor: 'black',
@@ -231,17 +235,17 @@ const styles = StyleSheet.create({
   },
   levelUpButton: {
     backgroundColor: '#F7CA15',
-    paddingVertical: 16, // Increased height
+    paddingVertical: 16,
     borderWidth: 2,
     borderColor: 'black',
-    borderRadius: 54, // Larger border radius
+    borderRadius: 54,
     alignItems: 'center',
-    marginHorizontal: 40, // Added horizontal padding for better alignment
-    marginBottom: 40, // Added margin to separate from the bottom
+    marginHorizontal: 40,
+    marginBottom: 40,
   },
   levelUpText: {
     color: 'black',
-    fontSize: 28, // Increased font size
+    fontSize: 28,
     fontFamily: 'Poppins_400Regular',
   },
 });
