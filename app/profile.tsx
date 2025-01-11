@@ -162,12 +162,20 @@ const ProfileScreen = () => {
           <View style={styles.progressHeader}>
             <Text style={[styles.progressTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Level Progress</Text>
             <View style={styles.pxContainer}>
-                <Icon name="star" style={styles.pxIcon} />
-                <Text style={[styles.pxText, { fontFamily: 'Poppins_400Regular' }]}>{profileData.points} PX</Text>
+              <Icon name="star" style={styles.pxIcon} />
+              <Text style={[styles.pxText, { fontFamily: 'Poppins_400Regular' }]}>{profileData.points} PX</Text>
             </View>
           </View>
           <View style={styles.progressBar}>
-            <View style={[styles.progress, { width: `${Math.min(profileData.points / 1000 * 100, 100)}%` }]} />
+            <View
+              style={[
+                styles.progress,
+                {
+                  width: `${Math.min(profileData.points / 1000 * 100, 100)}%`,
+                  borderWidth: profileData.points > 0 ? 2 : 0,
+                },
+              ]}
+            />
           </View>
         </View>
       </View>
@@ -210,7 +218,15 @@ const ProfileScreen = () => {
         <View style={styles.levelSection}>
           <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Level Progress</Text>
           <View style={styles.levelProgressBar}>
-            <View style={[styles.levelProgress, { width: `${Math.min(profileData.points / 1000 * 100, 100)}%` }]} />
+          <View
+              style={[
+                styles.levelProgress,
+                {
+                  width: `${Math.min(profileData.points / 1000 * 100, 100)}%`,
+                  borderWidth: profileData.points > 0 ? 2 : 0,
+                },
+              ]}
+            />
           </View>
         </View>
 
@@ -266,21 +282,23 @@ const styles = StyleSheet.create({
   },
   profileSection: {
     alignItems: 'center',
-    paddingTop: 80,
+    paddingTop: 70,
     paddingHorizontal: 20,
   },
   avatarContainer: {
     position: 'relative',
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 50,
     marginBottom: 10,
+    borderWidth: 4,
+    borderColor: 'black',
   },
   changePicButton: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 5,
     right: 0,
     backgroundColor: 'white',
     width: 30,
@@ -292,8 +310,8 @@ const styles = StyleSheet.create({
     borderColor: 'black',
   },
   changePicIcon: {
-    fontSize: 16,
-    color: 'black',
+    fontSize: 14,
+    color: '#009D60',
   },
   username: {
     color: 'white',
