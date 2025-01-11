@@ -4,6 +4,7 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-
 import { useRouter } from 'expo-router';
 
 interface QuizListItemProps {
+  id: string;
   title: string;
   level: number;
   subtitle: string;
@@ -11,36 +12,28 @@ interface QuizListItemProps {
   onPress?: () => void;
 }
 
-export const QuizListItem = ({ title, level, subtitle, image, onPress }: QuizListItemProps) => {
+export const QuizListItem = ({ id, title, level, subtitle, image }: QuizListItemProps) => {
   const router = useRouter();
-  const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_600SemiBold,
-  });
 
   const handlePress = () => {
-    router.push('/module-detail');
+    router.push(`/module-detail?id=${id}`);
   };
-
-  if (!fontsLoaded) return null;
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
-      {/* Green Container with Padding */}
       <View style={styles.imageContainer}>
         <Image source={image} style={styles.image} resizeMode="contain" />
       </View>
-
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.level}>Level {level}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
-
       <Feather name="chevron-right" size={20} color="#666" />
     </TouchableOpacity>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

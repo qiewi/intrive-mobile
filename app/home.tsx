@@ -16,6 +16,7 @@ import { Navbar } from '../components/ui/Navbar';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
+import { modules } from './modulesData'; // Import the modules data
 
 export default function Home() {
   const router = useRouter();
@@ -44,36 +45,11 @@ export default function Home() {
   };
 
   if (!fontsLoaded) {
-    return null; // Return null until fonts are loaded
+    return null; // Render nothing until fonts are loaded
   }
 
-  const continueQuizzes = [
-    {
-      title: 'Integral Tentu',
-      level: 2,
-      image: require('../assets/quiz/1.png'),
-    },
-    {
-      title: 'Derivative Basic',
-      level: 1,
-      image: require('../assets/quiz/1.png'),
-    },
-  ];
-
-  const latestQuizzes = [
-    {
-      title: 'Integral Tentu',
-      level: 1,
-      subtitle: 'Hubungannya dengan Notasi Sigma',
-      image: require('../assets/quiz/1.png'),
-    },
-    {
-      title: 'Integral Tentu',
-      level: 1,
-      subtitle: 'Pengenalan Dasar',
-      image: require('../assets/quiz/1.png'),
-    },
-  ];
+  // Filter modules by active tab (type: 'integral' or 'derivative')
+  const filteredModules = modules.filter((module) => module.type === activeTab);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,12 +89,12 @@ export default function Home() {
           style={styles.cardsScroll}
           contentContainerStyle={styles.cardsContainer}
         >
-          {continueQuizzes.map((quiz, index) => (
+          {modules.map((module) => (
             <QuizCard
-              key={index}
-              title={quiz.title}
-              level={quiz.level}
-              image={quiz.image}
+              key={module.id}
+              title={module.title}
+              level={module.level}
+              image={require('../assets/quiz/1.png')} // Replace with dynamic images if available
             />
           ))}
         </ScrollView>
@@ -132,18 +108,16 @@ export default function Home() {
         {/* Latest Quiz Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Latest Quiz</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAll}>See All</Text>
-            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>Available Modules</Text>
           </View>
-          {latestQuizzes.map((quiz, index) => (
+          {filteredModules.map((module) => (
             <QuizListItem
-              key={index}
-              title={quiz.title}
-              level={quiz.level}
-              subtitle={quiz.subtitle}
-              image={quiz.image}
+              key={module.id}
+              id={module.id}
+              title={module.title}
+              level={module.level}
+              subtitle={module.topic}
+              image={require('../assets/quiz/1.png')} // Replace with dynamic images if available
             />
           ))}
         </View>
@@ -250,10 +224,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     fontFamily: 'Poppins_600SemiBold',
-  },
-  seeAll: {
-    fontSize: 14,
-    color: '#666',
-    fontFamily: 'Poppins_400Regular',
   },
 });
