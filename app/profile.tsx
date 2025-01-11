@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
-import { doc, getDoc, Firestore } from "firebase/firestore";
+import { doc, setDoc, getDoc, Firestore } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 
 type Badge = {
@@ -30,6 +31,7 @@ type UserData = {
 
 const ProfileScreen = () => {
   const router = useRouter();
+  const userId = auth.currentUser?.uid;
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -75,15 +77,55 @@ const ProfileScreen = () => {
         allowsEditing: true,
         quality: 1,
       });
-
+  
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const selectedImage = result.assets[0];
-        setProfilePic(selectedImage.uri);
+        const newProfilePicUri = selectedImage.uri;
+  
+        setProfilePic(newProfilePicUri);
+  
+        try {
+          const docRef = doc(firestore, "users", auth.currentUser?.uid || "");
+          await setDoc(docRef, { profilePic: newProfilePicUri }, { merge: true });
+  
+          console.log("Profile picture updated in Firestore.");
+  
+          Alert.alert("Success", "Profile picture updated successfully!");
+        } catch (error) {
+          console.error("Error updating profile picture:", error);
+          Alert.alert("Error", "There was an issue updating your profile picture.");
+        }
+      } else {
+        console.log("Image picking was canceled or failed.");
       }
     } else {
       alert("Permission to access media library is required!");
     }
-  };  
+  }; 
+  
+  useEffect(() => {
+    const fetchProfilePic = async () => {
+      if (userId) {
+        try {
+          const docRef = doc(firestore, "users", userId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            if (userData.profilePic) {
+              setProfilePic(userData.profilePic);
+            }
+          } else {
+            console.log("User document not found!");
+          }
+        } catch (error) {
+          console.error("Error fetching profile picture:", error);
+        }
+      }
+    };
+
+    fetchProfilePic();
+  }, [userId]);
 
   if (!fontsLoaded) {
     return null;
