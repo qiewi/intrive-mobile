@@ -216,8 +216,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 4,
     paddingTop: 16,
-    height: 5 * 40, // 5 lines * lineHeight (40 from questionText)
-    marginBottom: 16,
   },
   mascot: {
     width: 120,
