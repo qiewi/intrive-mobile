@@ -12,8 +12,7 @@ import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -122,7 +121,11 @@ export default function SignUpScreen() {
               onChangeText={setPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.iconContainer}>
-              <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} size="lg" color="#A0A0A0" />
+              <FontAwesome 
+                name={showPassword ? "eye" : "eye-slash"} 
+                size={24} 
+                color="#A0A0A0" 
+              />
             </TouchableOpacity>
           </View>
         </View>

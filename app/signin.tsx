@@ -11,8 +11,7 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -94,10 +93,10 @@ export default function SignInScreen() {
               onPress={() => setPasswordVisible(!passwordVisible)}
               style={styles.eyeIcon}
             >
-              <FontAwesomeIcon
-                icon={passwordVisible ? faEye : faEyeSlash}
-                size='lg'
-                color="#A0A0A0"
+              <FontAwesome 
+                name={passwordVisible ? "eye" : "eye-slash"} 
+                size={24} 
+                color="#A0A0A0" 
               />
             </TouchableOpacity>
           </View>
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
   eyeIcon: {
     position: 'absolute',
     right: 20,
-    top: 25,
+    top: 20,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
