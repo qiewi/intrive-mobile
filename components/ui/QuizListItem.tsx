@@ -1,7 +1,9 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+
+import { integralModules } from '../../app/integralModules';
 
 interface QuizListItemProps {
   id: string;
@@ -15,8 +17,19 @@ interface QuizListItemProps {
 export const QuizListItem = ({ id, title, level, subtitle, image }: QuizListItemProps) => {
   const router = useRouter();
 
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+  });
+
+  if (!fontsLoaded) return null;
+
   const handlePress = () => {
-    router.push(`/module-detail?id=${id}`);
+    const moduleType = integralModules.some((module) => module.id === id)
+      ? 'integralModules'
+      : 'derivativeModules';
+
+    router.push(`/module-detail?id=${id}&type=${moduleType}`);
   };
 
   return (
@@ -25,15 +38,14 @@ export const QuizListItem = ({ id, title, level, subtitle, image }: QuizListItem
         <Image source={image} style={styles.image} resizeMode="contain" />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.level}>Level {level}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <Text style={[styles.title, { fontFamily: 'Poppins_600SemiBold' }]}>{title}</Text>
+        <Text style={[styles.level, { fontFamily: 'Poppins_400Regular' }]}>Level {level}</Text>
+        <Text style={[styles.subtitle, { fontFamily: 'Poppins_400Regular' }]}>{subtitle}</Text>
       </View>
       <Feather name="chevron-right" size={20} color="#666" />
     </TouchableOpacity>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -47,13 +59,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   imageContainer: {
-    width: 64, // Adjust size to match your design
+    width: 64,
     height: 64,
-    backgroundColor: '#009D60', // Green background
+    backgroundColor: '#009D60',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8, // Add padding inside the container
+    padding: 8,
   },
   image: {
     width: '100%',
@@ -65,18 +77,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
     color: '#000',
   },
   level: {
     fontSize: 14,
-    fontFamily: 'Poppins_400Regular',
     color: '#666',
     marginTop: 2,
   },
   subtitle: {
     fontSize: 10,
-    fontFamily: 'Poppins_400Regular',
     color: '#999',
     marginTop: 2,
   },

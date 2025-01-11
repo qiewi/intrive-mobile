@@ -15,7 +15,7 @@ import { ProgressDots } from '../components/ui/ProgressDots';
 import { ResultScreen } from '../components/ui/ResultScreen';
 import { quizzes } from './quizData';
 import { modules } from './modulesData';
-import type { Question, Module, Quiz } from './types/quiz';
+import type { Module, Quiz } from './types/quiz';
 
 interface Answer {
   questionIndex: number;
@@ -119,7 +119,6 @@ export default function QuizPage() {
   };
 
   const handleNextModule = () => {
-    // Navigate to next module
     router.push('/home');
   };
 
