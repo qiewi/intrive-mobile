@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 20,
+    flexGrow: 1,
   },
   streakCard: {
     backgroundColor: '#00A86B',

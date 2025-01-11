@@ -11,6 +11,7 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   if (!fontsLoaded) {
     return null;
@@ -32,7 +34,7 @@ export default function SignInScreen() {
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'All fields are required!');
-        return;
+      return;
     }
 
     try {
@@ -78,14 +80,26 @@ export default function SignInScreen() {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your password"
-            secureTextEntry
-            placeholderTextColor="#A0A0A0"
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              secureTextEntry={!passwordVisible}
+              placeholderTextColor="#A0A0A0"
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              style={styles.eyeIcon}
+            >
+              <FontAwesome 
+                name={passwordVisible ? "eye" : "eye-slash"} 
+                size={24} 
+                color="#A0A0A0" 
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <TouchableOpacity style={styles.forgotPassword}>
@@ -167,6 +181,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: 16,
     paddingVertical: 20,
+  },
+  passwordContainer: {
+    position: 'relative',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 20,
+    top: 20,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
