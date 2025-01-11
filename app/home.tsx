@@ -16,11 +16,12 @@ import { Navbar } from '../components/ui/Navbar';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
-import { modules } from './modulesData'; // Import the modules data
+import { integralModules } from './data/integralModules';
+import { derivativeModules } from './data/derivativeModules';
 
 export default function Home() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('integral');
+  const [activeTab, setActiveTab] = useState('integral'); // Default to 'integral'
   const [username, setUsername] = useState('');
 
   const [fontsLoaded] = useFonts({
@@ -48,8 +49,12 @@ export default function Home() {
     return null; // Render nothing until fonts are loaded
   }
 
-  // Filter modules by active tab (type: 'integral' or 'derivative')
-  const filteredModules = modules.filter((module) => module.type === activeTab);
+  // Filter modules based on activeTab (either 'integral' or 'derivative')
+  const filteredModules =
+    activeTab === 'integral' ? integralModules : derivativeModules;
+
+  // Combine all modules for the Continue Quiz Cards section
+  const allModules = [...integralModules, ...derivativeModules];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,7 +94,7 @@ export default function Home() {
           style={styles.cardsScroll}
           contentContainerStyle={styles.cardsContainer}
         >
-          {modules.map((module) => (
+          {allModules.map((module) => (
             <QuizCard
               key={module.id}
               title={module.title}

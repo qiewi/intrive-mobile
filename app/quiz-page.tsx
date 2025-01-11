@@ -13,8 +13,10 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { AnswerOption } from '../components/ui/AnswerOption';
 import { ProgressDots } from '../components/ui/ProgressDots';
 import { ResultScreen } from '../components/ui/ResultScreen';
-import { quizzes } from './quizData';
-import { modules } from './modulesData';
+import { integralModules } from './data/integralModules';
+import { derivativeModules } from './data/derivativeModules';
+import { integralQuizzes } from './data/integralQuizzes';
+import { derivativeQuizzes } from './data/derivativeQuizzes';
 import type { Module, Quiz } from './types/quiz';
 
 interface Answer {
@@ -24,13 +26,21 @@ interface Answer {
 
 export default function QuizPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
-  
-  // Find both quiz and module data
-  const quizData = quizzes.find((quiz) => quiz.id === id) as Quiz;
-  const moduleData = modules.find((module) => module.id === id) as Module;
+  const { id, type } = useLocalSearchParams(); // Get the `id` and `type` from the URL
 
-  if (!quizData || !moduleData) return null;
+  // Determine the correct module data based on `type`
+  const moduleData =
+    type === 'integralModules'
+      ? integralModules.find((module) => module.id === id)
+      : derivativeModules.find((module) => module.id === id);
+
+  // Determine the correct quiz data based on `type`
+  const quizData =
+    type === 'integralModules'
+      ? integralQuizzes.find((quiz) => quiz.id === id)
+      : derivativeQuizzes.find((quiz) => quiz.id === id);
+
+  if (!quizData || !moduleData) return null; // Ensure both module and quiz data exist
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -42,7 +52,7 @@ export default function QuizPage() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
-    Poppins_700Bold
+    Poppins_700Bold,
   });
 
   useEffect(() => {
@@ -56,9 +66,9 @@ export default function QuizPage() {
         return prev - 1;
       });
     }, 1000);
-  
+
     return () => clearInterval(timer);
-  }, [isComplete]); 
+  }, [isComplete]);
 
   if (!fontsLoaded) return null;
 
@@ -70,9 +80,9 @@ export default function QuizPage() {
 
   const handleAnswerSelect = (index: number) => {
     setSelectedAnswer(index);
-    setAnswers(prev => {
+    setAnswers((prev) => {
       const newAnswers = [...prev];
-      const existingAnswer = newAnswers.findIndex(a => a.questionIndex === currentQuestion);
+      const existingAnswer = newAnswers.findIndex((a) => a.questionIndex === currentQuestion);
       if (existingAnswer !== -1) {
         newAnswers[existingAnswer].selectedAnswer = index;
       } else {
@@ -94,7 +104,7 @@ export default function QuizPage() {
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
-      const previousAnswer = answers.find(a => a.questionIndex === currentQuestion - 1);
+      const previousAnswer = answers.find((a) => a.questionIndex === currentQuestion - 1);
       setSelectedAnswer(previousAnswer?.selectedAnswer ?? null);
     }
   };
@@ -106,7 +116,7 @@ export default function QuizPage() {
   };
 
   const handleBackToModule = () => {
-    router.back();
+    router.push(`/module-detail?id=${moduleData.id}&type=${type}`);
   };
 
   const handleTryAgain = () => {
@@ -367,4 +377,3 @@ const styles = StyleSheet.create({
     color: '#009D60',
   },
 });
-

@@ -4,8 +4,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { VideoCard } from '../components/ui/VideoCard';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { integralModules } from './integralModules';
-import { derivativeModules } from './derivativeModules';
+import { integralModules } from './data/integralModules';
+import { derivativeModules } from './data/derivativeModules';
 
 export default function ModuleDetail() {
   const { id, type } = useLocalSearchParams(); // Get the `id` and `type` from the URL
@@ -37,7 +37,10 @@ export default function ModuleDetail() {
   };
 
   const StartQuiz = () => {
-    router.push({ pathname: '/quiz-page', params: { id: moduleData.id } }); // Pass module id to the quiz-page
+    router.push({
+      pathname: '/quiz-page',
+      params: { id: moduleData.id, type }, // Pass both id and type
+    });
   };
 
   return (

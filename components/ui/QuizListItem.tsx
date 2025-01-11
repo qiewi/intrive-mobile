@@ -3,7 +3,7 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
-import { integralModules } from '../../app/integralModules';
+import { integralModules } from '../../app/data/integralModules';
 
 interface QuizListItemProps {
   id: string;
