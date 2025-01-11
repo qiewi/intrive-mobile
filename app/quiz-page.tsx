@@ -9,34 +9,56 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { AnswerOption } from '../components/ui/AnswerOption';
 import { ProgressDots } from '../components/ui/ProgressDots';
+import { ResultScreen } from '../components/ui/ResultScreen';
 import { quizzes } from './quizData';
+import { modules } from './modulesData';
+import type { Question, Module, Quiz } from './types/quiz';
+
+interface Answer {
+  questionIndex: number;
+  selectedAnswer: number;
+}
 
 export default function QuizPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams(); // Get the `id` from the URL
-  const quizData = quizzes.find((quiz) => quiz.id === id); // Find the quiz data by ID
+  const { id } = useLocalSearchParams();
+  
+  // Find both quiz and module data
+  const quizData = quizzes.find((quiz) => quiz.id === id) as Quiz;
+  const moduleData = modules.find((module) => module.id === id) as Module;
 
-  if (!quizData) return null; // If quiz not found, return null
+  if (!quizData || !moduleData) return null;
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [isComplete, setIsComplete] = useState(false);
+  const [isTimeUp, setIsTimeUp] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
+    Poppins_700Bold
   });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimeLeft((prev) => {
+        if (prev <= 1 || isComplete) {
+          setIsTimeUp(true);
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
-
+  
     return () => clearInterval(timer);
-  }, []);
+  }, [isComplete]); 
 
   if (!fontsLoaded) return null;
 
@@ -46,32 +68,99 @@ export default function QuizPage() {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-  const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-      setSelectedAnswer(null);
-    }
+  const handleAnswerSelect = (index: number) => {
+    setSelectedAnswer(index);
+    setAnswers(prev => {
+      const newAnswers = [...prev];
+      const existingAnswer = newAnswers.findIndex(a => a.questionIndex === currentQuestion);
+      if (existingAnswer !== -1) {
+        newAnswers[existingAnswer].selectedAnswer = index;
+      } else {
+        newAnswers.push({ questionIndex: currentQuestion, selectedAnswer: index });
+      }
+      return newAnswers;
+    });
   };
 
   const handleNext = () => {
     if (currentQuestion < quizData.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
+    } else if (answers.length === quizData.questions.length) {
+      setIsComplete(true);
     }
   };
 
-  const handleClose = () => {
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+      const previousAnswer = answers.find(a => a.questionIndex === currentQuestion - 1);
+      setSelectedAnswer(previousAnswer?.selectedAnswer ?? null);
+    }
+  };
+
+  const getCorrectAnswersCount = () => {
+    return answers.filter(
+      (answer) => quizData.questions[answer.questionIndex].correctAnswer === answer.selectedAnswer
+    ).length;
+  };
+
+  const handleBackToModule = () => {
     router.back();
   };
+
+  const handleTryAgain = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setAnswers([]);
+    setIsComplete(false);
+    setIsTimeUp(false);
+    setTimeLeft(180);
+  };
+
+  const handleNextModule = () => {
+    // Navigate to next module
+    router.push('/home');
+  };
+
+  if (isTimeUp && !isComplete) {
+    return (
+      <ResultScreen
+        type="timeout"
+        title={`${moduleData.title} - Level ${moduleData.level}`}
+        correctCount={getCorrectAnswersCount()}
+        totalQuestions={quizData.questions.length}
+        onBackToModule={handleBackToModule}
+        onTryAgain={handleTryAgain}
+      />
+    );
+  }
+
+  if (isComplete) {
+    const correctCount = getCorrectAnswersCount();
+    const allCorrect = correctCount === quizData.questions.length;
+
+    return (
+      <ResultScreen
+        type={allCorrect ? 'success' : 'error'}
+        title={`${moduleData.title} - Level ${moduleData.level}`}
+        correctCount={correctCount}
+        totalQuestions={quizData.questions.length}
+        onBackToModule={handleBackToModule}
+        onTryAgain={!allCorrect ? handleTryAgain : undefined}
+        onNextModule={allCorrect ? handleNextModule : undefined}
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton} onPress={handleClose}>
+        <TouchableOpacity style={styles.iconButton} onPress={handleBackToModule}>
           <Feather name="arrow-left" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Quiz</Text>
+        <Text style={styles.headerTitle}>{moduleData.title}</Text>
         <TouchableOpacity style={styles.iconButton}>
           <Feather name="grid" size={20} color="white" />
         </TouchableOpacity>
@@ -97,9 +186,11 @@ export default function QuizPage() {
         </View>
       </View>
 
-      {/* Question */}
+      {/* Mascot and Question */}
       <View style={styles.questionContainer}>
-        <Text style={styles.questionText}>{quizData.questions[currentQuestion].question}</Text>
+        <Text style={styles.questionText}>
+          {quizData.questions[currentQuestion].question}
+        </Text>
       </View>
 
       {/* Answer Options */}
@@ -112,7 +203,7 @@ export default function QuizPage() {
               label={String.fromCharCode(65 + index)}
               answer={answer}
               isSelected={selectedAnswer === index}
-              onSelect={() => setSelectedAnswer(index)}
+              onSelect={() => handleAnswerSelect(index)}
             />
           ))}
         </View>
@@ -131,6 +222,7 @@ export default function QuizPage() {
         <TouchableOpacity
           style={[styles.navButton, styles.nextButton]}
           onPress={handleNext}
+          disabled={selectedAnswer === null}
         >
           <Text style={[styles.navButtonText, styles.nextButtonText]}>Next</Text>
           <Feather name="chevron-right" size={20} color="#009D60" />
@@ -150,6 +242,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
+    marginTop: 32,
   },
   headerTitle: {
     fontSize: 18,
@@ -161,10 +254,10 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     borderColor: 'white',
-    borderRadius: 20, // Ensures circular shape
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-  },  
+  },
   progressSection: {
     padding: 16,
     marginBottom: 4,
@@ -177,10 +270,9 @@ const styles = StyleSheet.create({
   },
   progressContent: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%', // Ensure it occupies the full width
-  },  
+  },
   questionCount: {
     fontSize: 16,
     fontFamily: 'Poppins_400Regular',
@@ -216,22 +308,18 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 4,
     paddingTop: 16,
-    height: 5 * 40, // 5 lines * lineHeight (40 from questionText)
-    marginBottom: 16,
   },
   mascot: {
     width: 120,
     height: 120,
-    position: 'relative',
-    left: 16,
-    top: 0,
+    marginBottom: 16,
   },
   questionText: {
     fontSize: 24,
     fontFamily: 'Poppins_600SemiBold',
     color: 'white',
     paddingHorizontal: 8,
-    lineHeight: 40, // Set lineHeight to ensure spacing between lines
+    lineHeight: 40,
   },
   answersContainer: {
     padding: 16,
