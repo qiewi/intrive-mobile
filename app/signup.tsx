@@ -54,8 +54,17 @@ export default function SignUpScreen() {
           streaks: 0,
           level: 'Bronze',
           points: 0,
-          badges: [],
-        });
+          badges: [
+            { id: 1, title: 'Number Ninja', unlocked: false },
+            { id: 2, title: 'Equation Explorer', unlocked: false },
+            { id: 3, title: 'Math Wiz Kid', unlocked: false },
+            { id: 4, title: 'Integral Innovator', unlocked: false },
+            { id: 5, title: 'Function Finder', unlocked: false },
+            { id: 6, title: 'Slope Specialist', unlocked: false },
+            { id: 7, title: 'Problem Solver', unlocked: false },
+            { id: 8, title: 'Area Analyzer', unlocked: false },
+          ],
+        });        
       }
   
       Alert.alert('Success', 'Account created successfully!');
