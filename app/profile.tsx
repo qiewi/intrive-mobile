@@ -146,28 +146,33 @@ const ProfileScreen = () => {
         <View style={styles.badgesSection}>
             <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Badges</Text>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              <View style={styles.badgesGrid}>
-                {profileData.badges.map((badge) => (
-                  <View key={badge.id} style={styles.badgeContainer}>
-                    <Image
-                      source={
-                        badge.unlocked
-                          ? require('../assets/images/badge.png')
-                          : require('../assets/images/badge.png')
-                      }
-                      style={[styles.badgeIcon, !badge.unlocked && { opacity: 0.5 }]}
-                    />
-                    <Text
-                      style={[
-                        styles.badgeTitle,
-                        { fontFamily: 'Poppins_400Regular', color: badge.unlocked ? '#000' : '#A0A0A0' },
-                      ]}
-                    >
-                      {badge.title}
-                    </Text>
+            <View style={styles.badgesGrid}>
+              {profileData.badges.map((badge) => (
+                <View key={badge.id} style={styles.badgeContainer}>
+                  {/* Badge Image */}
+                  <View style={styles.badgeWrapper}>
+                    <Image source={require('../assets/images/badge.png')} style={styles.badgeIcon} />
+                    {!badge.unlocked && (
+                      <>
+                        <Image source={require('../assets/images/badge-mask.png')} style={styles.badgeMask} />
+                        <View style={styles.lockContainer}>
+                          <Image source={require('../assets/images/lock-icon.png')} style={styles.lockIcon} />
+                        </View>
+                      </>
+                    )}
                   </View>
-                ))}
-              </View>
+                  {/* Badge Title */}
+                  <Text
+                    style={[
+                      styles.badgeTitle,
+                      { color: badge.unlocked ? '#000' : '#A0A0A0' },
+                    ]}
+                  >
+                    {badge.title}
+                  </Text>
+                </View>
+              ))}
+            </View>
             </ScrollView>
         </View>
       </View>
@@ -376,7 +381,37 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 12,
     textAlign: 'center',
-  }
+  },
+
+  badgeWrapper: {
+    width: 60,
+    height: 70,
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+  badgeMask: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    opacity: 0.8,
+  },
+  
+  lockContainer: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+  lockIcon: {
+    width: 24, // Reduced width for better sizing
+    height: 32, // Adjusted height for proportion
+  },
+  
+  
 });
 
 export default ProfileScreen;
