@@ -89,10 +89,10 @@ export const integralModules = [
     {
       id: '8',
       type: 'integral',
-      title: 'Bentuk Tak Tentu dan Integral Tak Tentu',
+      title: 'Bentuk Tak Tentu',
       level: 8,
       status: 'Incomplete',
-      topic: 'Bentuk Tak Tentu',
+      topic: 'Bentuk 0/0, Infinite',
       videos: [
         { id: '1', title: 'Bentuk 0/0', url: 'https://youtu.be/jpcb5hRBLss?si=bpE-pwAQM-8kM1ec' },
         { id: '2', title: 'Bentuk Infinite dan Eksponensial', url: 'https://youtu.be/pd8mfe_8edI?si=kvhy3S51MJM9gnW1'}
@@ -102,10 +102,10 @@ export const integralModules = [
     {
       id: '9',
       type: 'integral',
-      title: 'Bentuk Tak Tentu dan Integral Tak Tentu',
+      title: 'Integral Tak Tentu',
       level: 9,
       status: 'Incomplete',
-      topic: 'Integral Tak Tentu',
+      topic: 'Integral dengan Batas Tak Hingga',
       videos: [
         { id: '1', title: 'Integral dengan Batas Tak Hingga 1', url: 'https://youtu.be/U3Liva2rARI?si=Eh0dXChbR5-tJ2Uy' },
         { id: '2', title: 'Integral dengan Batas Tak Hingga 2', url: 'https://youtu.be/LTQTflt-wao?si=Dwcjpsh-blsikAS9' },
