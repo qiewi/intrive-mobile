@@ -1,9 +1,8 @@
+import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
-
-import { integralModules } from '../../app/data/integralModules';
 
 interface QuizListItemProps {
   id: string;
@@ -11,10 +10,10 @@ interface QuizListItemProps {
   level: number;
   subtitle: string;
   image: any; // Use `any` to handle `require()` output
-  onPress?: () => void;
+  type: string; // 'integral' or 'derivative'
 }
 
-export const QuizListItem = ({ id, title, level, subtitle, image }: QuizListItemProps) => {
+export const QuizListItem = ({ id, title, level, subtitle, image, type }: QuizListItemProps) => {
   const router = useRouter();
 
   const [fontsLoaded] = useFonts({
@@ -25,10 +24,7 @@ export const QuizListItem = ({ id, title, level, subtitle, image }: QuizListItem
   if (!fontsLoaded) return null;
 
   const handlePress = () => {
-    const moduleType = integralModules.some((module) => module.id === id)
-      ? 'integralModules'
-      : 'derivativeModules';
-
+    const moduleType = type === 'integral' ? 'integralModules' : 'derivativeModules';
     router.push(`/module-detail?id=${id}&type=${moduleType}`);
   };
 

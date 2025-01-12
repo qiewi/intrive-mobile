@@ -15,14 +15,26 @@ import { QuizListItem } from '../components/ui/QuizListItem';
 import { Navbar } from '../components/ui/Navbar';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
-import { auth } from './firebaseConfig';
-import { integralModules } from './data/integralModules';
-import { derivativeModules } from './data/derivativeModules';
+import { auth, firestore } from './firebaseConfig';
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+
+interface Module {
+  id: string;
+  title: string;
+  level: number;
+  topic: string;
+  type: 'integralModules' | 'derivativeModules';
+}
 
 export default function Home() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('integral'); // Default to 'integral'
+  const [activeTab, setActiveTab] = useState<'integral' | 'derivative'>('integral');
   const [username, setUsername] = useState('');
+  const [modules, setModules] = useState<{ integral: Module[]; derivative: Module[] }>({
+    integral: [],
+    derivative: [],
+  });
+  const [userPoints, setUserPoints] = useState(0);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -33,12 +45,71 @@ export default function Home() {
     const loggedIn = auth.onAuthStateChanged((user) => {
       if (user) {
         setUsername(user.displayName || 'User');
+        fetchUserPoints(user.uid);
       } else {
         setUsername('User');
       }
     });
 
     return () => loggedIn();
+  }, []);
+
+  const fetchModules = async () => {
+    try {
+      const integralSnapshot = await getDocs(collection(firestore, 'integralModules'));
+      const integralModules = integralSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        type: 'integralModules',
+        ...doc.data(),
+      })) as Module[];
+
+      const derivativeSnapshot = await getDocs(collection(firestore, 'derivativeModules'));
+      const derivativeModules = derivativeSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        type: 'derivativeModules',
+        ...doc.data(),
+      })) as Module[];
+
+      setModules({ integral: integralModules, derivative: derivativeModules });
+    } catch (error) {
+      console.error('Error fetching modules:', error);
+    }
+  };
+
+  const fetchUserPoints = async (userId: string) => {
+    try {
+      const userDocRef = doc(firestore, 'users', userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const { modules } = userData;
+
+        // Calculate total points from all modules
+        const integralPoints = Object.values(modules?.integralModule || {}).reduce(
+          (acc: number, module: any) => acc + (module.points || 0),
+          0
+        );
+        const derivativePoints = Object.values(modules?.derivativeModule || {}).reduce(
+          (acc: number, module: any) => acc + (module.points || 0),
+          0
+        );
+
+        const totalPoints = integralPoints + derivativePoints;
+
+        // Update points in Firestore
+        await updateDoc(userDocRef, { points: totalPoints });
+
+        // Update local state
+        setUserPoints(totalPoints);
+      }
+    } catch (error) {
+      console.error('Error fetching user points:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchModules();
   }, []);
 
   const NavigateProfile = () => {
@@ -49,12 +120,10 @@ export default function Home() {
     return null; // Render nothing until fonts are loaded
   }
 
-  // Filter modules based on activeTab (either 'integral' or 'derivative')
   const filteredModules =
-    activeTab === 'integral' ? integralModules : derivativeModules;
+    activeTab === 'integral' ? modules.integral : modules.derivative;
 
-  // Combine all modules for the Continue Quiz Cards section
-  const allModules = [...integralModules, ...derivativeModules];
+  const allModules = [...modules.integral, ...modules.derivative];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,11 +141,16 @@ export default function Home() {
                   <Text style={styles.levelText}>My Level Progress</Text>
                   <View style={styles.xpContainer}>
                     <FontAwesome name="star" size={16} color="#FFB800" />
-                    <Text style={styles.xpText}>373 PX</Text>
+                    <Text style={styles.xpText}>{userPoints} PX</Text>
                   </View>
                 </View>
                 <View style={styles.progressBar}>
-                  <View style={[styles.progress, { width: '60%' }]} />
+                  <View
+                    style={[
+                      styles.progress,
+                      { width: `${Math.min((userPoints / 2200) * 100, 100)}%` },
+                    ]}
+                  />
                 </View>
               </View>
             </View>
@@ -98,10 +172,10 @@ export default function Home() {
             <QuizCard
               key={module.id}
               id={module.id}
-              type={module.type === 'integral' ? 'integralModules' : 'derivativeModules'} 
+              type={module.type}
               title={module.title}
               level={module.level}
-              image={require('../assets/quiz/1.png')} 
+              image={require('../assets/quiz/1.png')}
             />
           ))}
         </ScrollView>
@@ -124,7 +198,8 @@ export default function Home() {
               title={module.title}
               level={module.level}
               subtitle={module.topic}
-              image={require('../assets/quiz/1.png')} // Replace with dynamic images if available
+              image={require('../assets/quiz/1.png')}
+              type={module.type}
             />
           ))}
         </View>
