@@ -4,8 +4,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { VideoCard } from '../components/ui/VideoCard';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { firestore, auth } from './firebaseConfig'; // Import Firestore and Auth
+import { firestore, auth } from './firebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { Tooltip } from 'react-native-elements'; 
 
 interface Video {
   id: string;
@@ -14,18 +15,21 @@ interface Video {
 }
 
 export default function ModuleDetail() {
-  const { id, type } = useLocalSearchParams(); // Get the `id` and `type` from the URL
+  const { id, type } = useLocalSearchParams();
   const router = useRouter();
 
-  const [watchedVideos, setWatchedVideos] = useState<string[]>([]); // Store watched video IDs
-  const [moduleData, setModuleData] = useState<any | null>(null); // Store module data
+  const [watchedVideos, setWatchedVideos] = useState<string[]>([]);
+  const [moduleData, setModuleData] = useState<any | null>(null);
+  const [userModuleData, setUserModuleData] = useState<any | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
   });
 
   useEffect(() => {
-    const fetchUserWatchedVideos = async () => {
+    const fetchUserAndModuleData = async () => {
       try {
         const moduleId = parseInt(id as string, 10);
 
@@ -42,6 +46,8 @@ export default function ModuleDetail() {
         }
 
         const userId = loggedInUser.uid;
+
+        // Fetch user-specific module data
         const userDoc = await getDoc(doc(firestore, 'users', userId));
         if (!userDoc.exists()) {
           Alert.alert('Error', 'User data not found.');
@@ -50,25 +56,22 @@ export default function ModuleDetail() {
 
         const userData = userDoc.data();
         const userModules = userData.modules || {};
+        const moduleKey = type === 'integralModules' ? 'integralModule' : 'derivativeModule';
 
-        const userModule =
-          type === 'integralModules'
-            ? userModules.integralModule?.[moduleId]
-            : userModules.derivativeModule?.[moduleId];
+        const userModule = userModules[moduleKey]?.[moduleId];
 
         if (userModule) {
           setWatchedVideos(userModule.watchedVideos || []);
+          setUserModuleData(userModule);
         } else {
           setWatchedVideos([]);
+          setUserModuleData({
+            status: 'Incomplete',
+            quizScore: 0,
+          });
         }
-      } catch (error) {
-        console.error('Error fetching user watched videos:', error);
-        Alert.alert('Error', 'Could not load watched videos.');
-      }
-    };
 
-    const fetchModuleData = async () => {
-      try {
+        // Fetch module metadata
         const collectionName = type === 'integralModules' ? 'integralModules' : 'derivativeModules';
         const moduleDoc = await getDoc(doc(firestore, collectionName, id as string));
 
@@ -78,16 +81,21 @@ export default function ModuleDetail() {
           Alert.alert('Error', 'Module not found.');
         }
       } catch (error) {
-        console.error('Error fetching module data:', error);
+        console.error('Error fetching data:', error);
         Alert.alert('Error', 'Could not load module details.');
       }
     };
 
-    fetchUserWatchedVideos();
-    fetchModuleData();
+    fetchUserAndModuleData();
   }, [id, type, router]);
 
-  if (!fontsLoaded || !moduleData) return null; // Render nothing until fonts and data are loaded
+  if (!fontsLoaded || !moduleData || !userModuleData) return null;
+
+  const allVideosWatched = moduleData.videos.every((video: Video) =>
+    watchedVideos.includes(video.id)
+  );
+
+  const isLevelUpDisabled = !allVideosWatched || userModuleData.quizCompleted;
 
   const handleWatch = async (videoId: string, videoUrl: string) => {
     try {
@@ -97,31 +105,29 @@ export default function ModuleDetail() {
         router.push('/signin');
         return;
       }
-  
+
       const userId = loggedInUser.uid;
       const userDocRef = doc(firestore, 'users', userId);
       const userDocSnap = await getDoc(userDocRef);
-  
+
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         const userModules = userData.modules || {};
         const moduleKey = type === 'integralModules' ? 'integralModule' : 'derivativeModule';
         const moduleId = parseInt(id as string, 10);
-  
+
         if (!userModules[moduleKey]?.[moduleId]) {
           Alert.alert('Error', 'Module data not found.');
           return;
         }
-  
+
         const userModule = userModules[moduleKey]?.[moduleId];
         const watchedVideos = userModule.watchedVideos || [];
-  
-        // Add the videoId to watchedVideos if not already present
+
         if (!watchedVideos.includes(videoId)) {
           watchedVideos.push(videoId);
         }
-  
-        // Update Firestore with the new watchedVideos array
+
         await setDoc(
           userDocRef,
           {
@@ -136,11 +142,8 @@ export default function ModuleDetail() {
           },
           { merge: true }
         );
-  
-        // Update local state for UI
+
         setWatchedVideos([...watchedVideos]);
-  
-        // Navigate to the video page, passing the video URL
         router.push({ pathname: '/video-page', params: { videoUrl } });
       } else {
         Alert.alert('Error', 'User data not found.');
@@ -150,17 +153,18 @@ export default function ModuleDetail() {
       Alert.alert('Error', 'Could not update watched videos.');
     }
   };
-  
 
   const BackToHome = () => {
     router.push('/home');
   };
 
   const StartQuiz = () => {
-    router.push({
-      pathname: '/quiz-page',
-      params: { id, type },
-    });
+    if (!isLevelUpDisabled) {
+      router.push({
+        pathname: '/quiz-page',
+        params: { id, type },
+      });
+    }
   };
 
   return (
@@ -179,7 +183,7 @@ export default function ModuleDetail() {
         </View>
         <View style={styles.statusBadge}>
           <Text style={styles.statusText}>Status</Text>
-          <Text style={styles.statusValue}>{moduleData.status}</Text>
+          <Text style={styles.statusValue}>{userModuleData.status}</Text>
         </View>
       </View>
 
@@ -205,23 +209,45 @@ export default function ModuleDetail() {
       <View style={styles.scoreContainer}>
         <View style={styles.scoreDetail}>
           <Text style={styles.scoreText}>Your Last Score</Text>
-          <Text style={styles.scoreValue}>{moduleData.userScore || 0}/5</Text>
+          <Text style={styles.scoreValue}>{userModuleData.quizScore}/5</Text>
         </View>
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
-            <View style={[styles.progress, { width: `${(moduleData.userScore / 5) * 100}%` }]} />
+            <View style={[styles.progress, { width: `${(userModuleData.quizScore / 5) * 100}%` }]} />
           </View>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.levelUpButton} onPress={StartQuiz}>
-        <Text style={styles.levelUpText}>Level Up</Text>
-      </TouchableOpacity>
+      <View>
+        <TouchableOpacity
+          style={[
+            styles.levelUpButton,
+            isLevelUpDisabled && styles.disabledButton,
+          ]}
+          onPress={StartQuiz}
+          disabled={isLevelUpDisabled}
+          onLongPress={() => setTooltipVisible(true)}
+          onPressOut={() => setTooltipVisible(false)}
+        >
+          <Text style={styles.levelUpText}>
+            Level Up
+          </Text>
+        </TouchableOpacity>
+        {tooltipVisible && (
+          <View style={styles.tooltipContainer}>
+            <Text style={styles.tooltipText}>
+              {userModuleData.quizCompleted
+                ? 'Quiz has already been completed.'
+                : 'Watch all videos to unlock the quiz.'}
+            </Text>
+          </View>
+        )}
+      </View>
+
+
     </View>
   );
 }
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -362,9 +388,26 @@ const styles = StyleSheet.create({
     marginHorizontal: 40,
     marginBottom: 40,
   },
+  disabledButton: {
+    backgroundColor: '#f0d488', // A paler version of the original yellow
+    opacity: 0.6,
+  },
   levelUpText: {
     color: 'black',
     fontSize: 28,
     fontFamily: 'Poppins_400Regular',
   },
+  tooltipContainer: {
+    position: 'absolute',
+    bottom: '110%',
+    backgroundColor: 'black',
+    padding: 8,
+    borderRadius: 8,
+    zIndex: 1,
+  },
+  tooltipText: {
+    color: 'white',
+    fontSize: 12,
+    textAlign: 'center',
+  },  
 });

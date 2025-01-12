@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -13,11 +14,12 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { AnswerOption } from '../components/ui/AnswerOption';
 import { ProgressDots } from '../components/ui/ProgressDots';
 import { ResultScreen } from '../components/ui/ResultScreen';
+import { firestore, auth } from './firebaseConfig';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { integralModules } from './data/integralModules';
 import { derivativeModules } from './data/derivativeModules';
 import { integralQuizzes } from './data/integralQuizzes';
 import { derivativeQuizzes } from './data/derivativeQuizzes';
-import type { Module, Quiz } from './types/quiz';
 
 interface Answer {
   questionIndex: number;
@@ -26,25 +28,23 @@ interface Answer {
 
 export default function QuizPage() {
   const router = useRouter();
-  const { id, type } = useLocalSearchParams(); // Get the `id` and `type` from the URL
+  const { id, type } = useLocalSearchParams();
 
-  // Determine the correct module data based on `type`
   const moduleData =
     type === 'integralModules'
       ? integralModules.find((module) => module.id === id)
       : derivativeModules.find((module) => module.id === id);
 
-  // Determine the correct quiz data based on `type`
   const quizData =
     type === 'integralModules'
       ? integralQuizzes.find((quiz) => quiz.id === id)
       : derivativeQuizzes.find((quiz) => quiz.id === id);
 
-  if (!quizData || !moduleData) return null; // Ensure both module and quiz data exist
+  if (!quizData || !moduleData) return null;
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(180);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [isComplete, setIsComplete] = useState(false);
   const [isTimeUp, setIsTimeUp] = useState(false);
@@ -54,23 +54,6 @@ export default function QuizPage() {
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1 || isComplete) {
-          setIsTimeUp(true);
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isComplete]);
-
-  if (!fontsLoaded) return null;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -109,11 +92,102 @@ export default function QuizPage() {
     }
   };
 
+  const calculatePoints = (correctCount: number) => {
+    const totalQuestions = quizData.questions.length;
+    const levelBonus = moduleData.level;
+    const timeBonus = timeLeft;
+    const points = Math.abs((correctCount / totalQuestions) * 100) + levelBonus * 5 + Math.abs(timeBonus * 0.1);
+    return Math.round(points);
+  };
+
   const getCorrectAnswersCount = () => {
     return answers.filter(
       (answer) => quizData.questions[answer.questionIndex].correctAnswer === answer.selectedAnswer
     ).length;
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1 ) {
+          clearInterval(timer);
+          setIsTimeUp(true);
+          return 0; 
+        } else if (isComplete) {
+          clearInterval(timer);
+          return prev;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  
+    return () => clearInterval(timer);
+  }, [isComplete]);
+  
+  const storeProgress = async () => {
+    try {
+      const correctCount = getCorrectAnswersCount();
+      const points = calculatePoints(correctCount);
+  
+      const elapsedTime = 180 - timeLeft; 
+  
+      const loggedInUser = auth.currentUser;
+      if (!loggedInUser) {
+        Alert.alert('Error', 'You must be logged in to save progress.');
+        router.push('/signin');
+        return;
+      }
+  
+      const userId = loggedInUser.uid;
+      const userDocRef = doc(firestore, 'users', userId);
+      const userDocSnap = await getDoc(userDocRef);
+  
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const userModules = userData.modules || {};
+        const moduleKey = type === 'integralModules' ? 'integralModule' : 'derivativeModule';
+  
+        const moduleId = parseInt(id as string, 10);
+        const allCorrect = correctCount === quizData.questions.length;
+  
+        const updatedModule = {
+          ...userModules[moduleKey]?.[moduleId],
+          points,
+          elapsedTime,
+          quizCompleted: allCorrect,
+          status: allCorrect ? 'Completed' : 'Incomplete',
+          quizScore: correctCount,
+        };
+  
+        await setDoc(
+          userDocRef,
+          {
+            modules: {
+              [moduleKey]: {
+                [moduleId]: updatedModule,
+              },
+            },
+          },
+          { merge: true }
+        );
+  
+        Alert.alert('Success', allCorrect ? 'Quiz completed successfully!' : 'Progress saved!');
+      } else {
+        Alert.alert('Error', 'User data not found.');
+      }
+    } catch (error) {
+      console.error('Error saving progress:', error);
+      Alert.alert('Error', 'Could not save progress.');
+    }
+  };
+  
+  // Call `storeProgress` when the quiz is complete or the timer runs out
+  useEffect(() => {
+    if (isComplete || isTimeUp) {
+      storeProgress();
+    }
+  }, [isComplete, isTimeUp]);
+  
 
   const handleBackToModule = () => {
     router.push(`/module-detail?id=${moduleData.id}&type=${type}`);
@@ -123,7 +197,6 @@ export default function QuizPage() {
     setCurrentQuestion(0);
     setSelectedAnswer(null);
     setAnswers([]);
-    setIsComplete(false);
     setIsTimeUp(false);
     setTimeLeft(180);
   };
