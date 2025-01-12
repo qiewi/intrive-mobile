@@ -17,7 +17,6 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-
 import { useRouter } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
 import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { router, useRootNavigation } from 'expo-router';
 
 interface Module {
   id: string;
@@ -37,13 +36,6 @@ export default function Home() {
   });
   const [userPoints, setUserPoints] = useState(0);
 
-  const rootNavigation = useRootNavigation();
-  
-    useEffect(() => {
-      if (!auth.currentUser && rootNavigation?.isReady) {
-        router.replace('/');
-      }
-    }, [auth.currentUser, rootNavigation?.isReady]);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,

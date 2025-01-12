@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useRouter, useRootNavigation } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
 import { doc, setDoc, getDoc, Firestore } from "firebase/firestore";
 import { signOut } from 'firebase/auth';
@@ -32,7 +32,6 @@ type UserData = {
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const rootNavigation = useRootNavigation();
   const userId = auth.currentUser?.uid;
 
   const handleLogout = async () => {
@@ -44,15 +43,6 @@ const ProfileScreen = () => {
       Alert.alert('Error', 'Failed to log out. Please try again.');
     }
   };
-
-  useEffect(() => {
-    if (!auth.currentUser && rootNavigation?.isReady) {
-      // Delay navigation to ensure Root Layout is mounted
-      setTimeout(() => {
-        router.replace('/');
-      }, 500); // 500ms delay (adjust as needed)
-    }
-  }, [auth.currentUser, rootNavigation?.isReady]);  
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
