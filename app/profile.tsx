@@ -192,7 +192,7 @@ const ProfileScreen = () => {
               style={[
                 styles.progress,
                 {
-                  width: `${Math.min(profileData.points / 1000 * 100, 100)}%`,
+                  width: `${Math.min((profileData.points / 2200) * 100, 100)}%`,
                   borderWidth: profileData.points > 0 ? 2 : 0,
                 },
               ]}
@@ -239,11 +239,11 @@ const ProfileScreen = () => {
         <View style={styles.levelSection}>
           <Text style={[styles.sectionTitle, { fontFamily: 'Poppins_600SemiBold' }]}>My Level Progress</Text>
           <View style={styles.levelProgressBar}>
-          <View
+            <View
               style={[
                 styles.levelProgress,
                 {
-                  width: `${Math.min(profileData.points / 1000 * 100, 100)}%`,
+                  width: `${Math.min((profileData.points / 2200) * 100, 100)}%`,
                   borderWidth: profileData.points > 0 ? 2 : 0,
                 },
               ]}
@@ -487,8 +487,6 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#FFD700',
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#000000',
   },
   badgesSection: {
     marginBottom: 20,
