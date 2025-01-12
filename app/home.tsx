@@ -72,7 +72,7 @@ export default function Home() {
                   <Text style={styles.levelText}>My Level Progress</Text>
                   <View style={styles.xpContainer}>
                     <FontAwesome name="star" size={16} color="#FFB800" />
-                    <Text style={styles.xpText}>373 XP</Text>
+                    <Text style={styles.xpText}>373 PX</Text>
                   </View>
                 </View>
                 <View style={styles.progressBar}>
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
   },
   cardsScroll: {
-    marginLeft: 16,
+    paddingLeft: 16,
   },
   cardsContainer: {
     paddingRight: 16,

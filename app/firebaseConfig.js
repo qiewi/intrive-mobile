@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
@@ -12,9 +12,11 @@ const firebaseConfig = {
   appId: '1:1092306470036:android:eb9ba00058362698de6081',
 };
 
-const app = initializeApp(firebaseConfig);
+// Check if any Firebase app instances are already initialized
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, firestore, storage };
+export { app, auth, firestore, storage };

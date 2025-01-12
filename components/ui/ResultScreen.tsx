@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   message: {
-    fontSize: 60,
+    fontSize: 54,
     color: 'white',
     fontFamily: 'Poppins_700Bold'
   },
