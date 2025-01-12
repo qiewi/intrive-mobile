@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import { Linking } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
 interface VideoCardProps {
   title: string;
   videoUrl: string;
+  videoId: string; // Add the video ID
   isWatched: boolean;
-  onWatch?: () => void;
+  onWatch?: (videoId: string) => void; // Pass video ID to the handler
 }
 
-export const VideoCard = ({ title, videoUrl, isWatched, onWatch }: VideoCardProps) => {
+export const VideoCard = ({ title, videoUrl, videoId, isWatched, onWatch }: VideoCardProps) => {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
@@ -22,12 +22,8 @@ export const VideoCard = ({ title, videoUrl, isWatched, onWatch }: VideoCardProp
   return (
     <View style={styles.videoCard}>
       <View style={styles.header}>
-        <Text style={styles.videoTitle}>Judul</Text>
-        <Text
-          style={styles.videoContent}
-          numberOfLines={2}
-          ellipsizeMode="tail"
-        >
+        <Text style={styles.videoTitle}>Title</Text>
+        <Text style={styles.videoContent} numberOfLines={2} ellipsizeMode="tail">
           {title}
         </Text>
       </View>
@@ -40,7 +36,7 @@ export const VideoCard = ({ title, videoUrl, isWatched, onWatch }: VideoCardProp
         <TouchableOpacity
           style={styles.watchButton}
           onPress={() => {
-            onWatch && onWatch();
+            onWatch && onWatch(videoId); // Pass videoId to the onWatch handler
           }}
         >
           <Text style={styles.watchButtonText}>Watch</Text>
