@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useRouter } from 'expo-router';
+import { useRouter, useRootNavigation } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
 import { doc, setDoc, getDoc, Firestore } from "firebase/firestore";
+import { signOut } from 'firebase/auth';
 import * as ImagePicker from 'expo-image-picker';
 
 type Badge = {
@@ -31,7 +32,27 @@ type UserData = {
 
 const ProfileScreen = () => {
   const router = useRouter();
+  const rootNavigation = useRootNavigation();
   const userId = auth.currentUser?.uid;
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.replace('/');
+    } catch (error) {
+      console.error('Error signing out: ', error);
+      Alert.alert('Error', 'Failed to log out. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    if (!auth.currentUser && rootNavigation?.isReady) {
+      // Delay navigation to ensure Root Layout is mounted
+      setTimeout(() => {
+        router.replace('/');
+      }, 500); // 500ms delay (adjust as needed)
+    }
+  }, [auth.currentUser, rootNavigation?.isReady]);  
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -101,8 +122,8 @@ const ProfileScreen = () => {
     } else {
       alert("Permission to access media library is required!");
     }
-  }; 
-  
+  };
+
   useEffect(() => {
     const fetchProfilePic = async () => {
       if (userId) {
@@ -181,7 +202,7 @@ const ProfileScreen = () => {
       </View>
 
       {/* White Container for Bottom Content */}
-      <View style={styles.whiteContainer}>
+      <ScrollView style={styles.whiteContainer}>
         {/* Streaks Section */}
         <TouchableOpacity style={styles.streakCard}>
             <View style={styles.streakContent}>
@@ -260,7 +281,15 @@ const ProfileScreen = () => {
             </View>
             </ScrollView>
         </View>
+
+        {/* Logout Button */}
+      <View style={styles.logoutButtonContainer}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Log Out</Text>
+        </TouchableOpacity>
       </View>
+
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -513,11 +542,27 @@ const styles = StyleSheet.create({
   },
   
   lockIcon: {
-    width: 24, // Reduced width for better sizing
-    height: 32, // Adjusted height for proportion
+    width: 24,
+    height: 32,
   },
-  
-  
+  logoutButtonContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  logoutButton: {
+    backgroundColor: '#FF3B30',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: '#000000',
+  },
+  logoutButtonText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: 'white',
+    fontSize: 16,
+  },
 });
 
 export default ProfileScreen;
