@@ -11,6 +11,8 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { fetchModules } from './api/modules';
+import { syncUserHistory } from './api/userHistory';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function SignInScreen() {
@@ -36,23 +38,29 @@ export default function SignInScreen() {
       Alert.alert('Error', 'All fields are required!');
       return;
     }
-
+  
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      Alert.alert('Success', 'Login successful!');
-      router.push('/home');
+  
+      if (user) {
+        // Fetch modules and sync user history
+        const fetchedModules = await fetchModules();
+        await syncUserHistory(user.uid, fetchedModules);
+  
+        Alert.alert('Success', 'Login successful!');
+        router.push('/home');
+      }
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
         Alert.alert('Error', 'Your email is invalid or the password is incorrect. Please try again.');
       } else if (error.code === 'auth/wrong-password') {
         Alert.alert('Error', 'Your email is invalid or the password is incorrect. Please try again.');
       } else {
-        Alert.alert('Error', 'Your email is invalid or the password is incorrect. Please try again.');
+        Alert.alert('Error', 'Login failed. Please try again.');
       }
     }
-  };
+  };  
 
   const navigateRegister = () => {
     router.push('/signup');
