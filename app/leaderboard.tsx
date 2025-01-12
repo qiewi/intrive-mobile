@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Image, ScrollView } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { GlobalText } from '../components/GlobalTextProvider';
 import { Navbar } from '../components/ui/Navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { router } from 'expo-router';
+import { auth } from './firebaseConfig';
+import { useRootNavigation } from 'expo-router';
 
 export default function Leaderboard() {
+  const rootNavigation = useRootNavigation();
+
+  useEffect(() => {
+    if (!auth.currentUser && rootNavigation?.isReady) {
+      router.replace('/');
+    }
+  }, [auth.currentUser, rootNavigation?.isReady]);
+  
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
