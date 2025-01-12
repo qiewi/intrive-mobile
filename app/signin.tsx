@@ -11,7 +11,6 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } fr
 import { useRouter } from 'expo-router';
 import { auth } from './firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { fetchModules } from './api/modules';
 import { syncUserHistory } from './api/userHistory';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -26,7 +25,6 @@ export default function SignInScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   if (!fontsLoaded) {
@@ -38,16 +36,15 @@ export default function SignInScreen() {
       Alert.alert('Error', 'All fields are required!');
       return;
     }
-  
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-  
+
       if (user) {
-        // Fetch modules and sync user history
-        const fetchedModules = await fetchModules();
-        await syncUserHistory(user.uid, fetchedModules);
-  
+        // Sync user history with fetched module counts
+        await syncUserHistory(user.uid);
+
         Alert.alert('Success', 'Login successful!');
         router.push('/home');
       }
@@ -60,7 +57,7 @@ export default function SignInScreen() {
         Alert.alert('Error', 'Login failed. Please try again.');
       }
     }
-  };  
+  };
 
   const navigateRegister = () => {
     router.push('/signup');
@@ -101,10 +98,10 @@ export default function SignInScreen() {
               onPress={() => setPasswordVisible(!passwordVisible)}
               style={styles.eyeIcon}
             >
-              <FontAwesome 
-                name={passwordVisible ? "eye" : "eye-slash"} 
-                size={24} 
-                color="#A0A0A0" 
+              <FontAwesome
+                name={passwordVisible ? 'eye' : 'eye-slash'}
+                size={24}
+                color="#A0A0A0"
               />
             </TouchableOpacity>
           </View>
