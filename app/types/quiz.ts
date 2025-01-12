@@ -9,7 +9,7 @@ export interface Video {
     type: 'integral' | 'derivative';
     title: string;
     level: number;
-    status: 'complete' | 'incomplete';
+    status: 'Complete' | 'Incomplete';
     topic: string;
     videos: Video[];
     userScore: number;
