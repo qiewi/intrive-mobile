@@ -38,11 +38,17 @@ const ProfileScreen = () => {
     try {
       await signOut(auth);
       router.replace('/');
+  
+      window.history.pushState(null, '', '/');
+      window.onpopstate = () => {
+        router.replace('/');
+      };
     } catch (error) {
       console.error('Error signing out: ', error);
       Alert.alert('Error', 'Failed to log out. Please try again.');
     }
   };
+  
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
