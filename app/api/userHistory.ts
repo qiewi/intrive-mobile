@@ -51,7 +51,7 @@ export async function syncUserHistory(userId: string) {
       }
 
       // Loop through derivative modules
-      for (let i = 11; i <= moduleCounts.derivativeModules + 10; i++) {
+      for (let i = 21; i <= moduleCounts.derivativeModules + 20; i++) {
         if (!userModules.derivativeModule[i]) {
           userModules.derivativeModule[i] = {
             status: 'Incomplete',
@@ -88,7 +88,7 @@ export async function syncUserHistory(userId: string) {
       }
 
       // Loop through derivative modules
-      for (let i = 11; i <= moduleCounts.derivativeModules + 10; i++) {
+      for (let i = 21; i <= moduleCounts.derivativeModules + 20; i++) {
         newUserModules.derivativeModule[i] = {
           status: 'Incomplete',
           points: 0,

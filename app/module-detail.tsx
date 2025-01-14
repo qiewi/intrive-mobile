@@ -209,7 +209,7 @@ export default function ModuleDetail() {
       <View style={styles.scoreContainer}>
         <View style={styles.scoreDetail}>
           <Text style={styles.scoreText}>Your Last Score</Text>
-          <Text style={styles.scoreValue}>{userModuleData.quizScore}/5</Text>
+          <Text style={styles.scoreValue}>{userModuleData.quizScore}</Text>
         </View>
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>

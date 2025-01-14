@@ -194,12 +194,14 @@ export default function QuizPage() {
   };
 
   const handleTryAgain = () => {
-    setCurrentQuestion(0);
+    setCurrentQuestion(0); 
     setSelectedAnswer(null);
     setAnswers([]);
-    setIsTimeUp(false);
+    setIsComplete(false); 
+    setIsTimeUp(false); 
     setTimeLeft(180);
   };
+  
 
   const handleNextModule = () => {
     router.push('/home');

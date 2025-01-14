@@ -1,6 +1,6 @@
 export const derivativeQuizzes = [
   {
-    "id": '11',
+    "id": '21',
     "questions": [
       {
         "question": "Turunan dari fungsi f(x) = x³ + 3x² adalah?",
@@ -35,7 +35,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '12',
+    "id": '22',
     "questions": [
       {
         "question": "Laju perubahan y terhadap x dalam persamaan x² + y² = 25 adalah?",
@@ -50,7 +50,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '13',
+    "id": '23',
     "questions": [
       {
         "question": "Diferensial dari fungsi f(x) = x² + 3x pada titik x = 2 adalah?",
@@ -85,7 +85,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '14',
+    "id": '24',
     "questions": [
       {
         "question": "Fungsi f(x) = -x² + 4x memiliki nilai maksimum pada?",
@@ -100,7 +100,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '15',
+    "id": '25',
     "questions": [
       {
         "question": "Jika f'(x) = 0 dan f''(x) > 0, maka fungsi f(x) memiliki?",
@@ -125,7 +125,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '16',
+    "id": '26',
     "questions": [
       {
         "question": "Fungsi f(x) = x³ - 3x² + 2 memiliki titik ekstrem lokal pada?",
@@ -160,7 +160,7 @@ export const derivativeQuizzes = [
     ]
   },  
   {
-    "id": '17',
+    "id": '27',
     "questions": [
       {
         "question": "Teorema Nilai Rata-rata Turunan digunakan untuk mencari?",
@@ -195,7 +195,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '18',
+    "id": '28',
     "questions": [
       {
         "question": "Antiturunan dari f(x) = cos(x) adalah?",
@@ -230,7 +230,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '19',
+    "id": '29',
     "questions": [
       {
         "question": "Untuk fungsi f(x, y) = x² + y², turunan parsial terhadap x adalah?",
@@ -255,7 +255,7 @@ export const derivativeQuizzes = [
     ]
   },
   {
-    "id": '20',
+    "id": '30',
     "questions": [
       {
         "question": "Jika limit f(x, y) = (x² + y²) saat (x, y) → (0, 0) adalah?",
