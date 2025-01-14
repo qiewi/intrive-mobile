@@ -1,9 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, ScrollView } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { GlobalText } from '../components/GlobalTextProvider';
 import { Navbar } from '../components/ui/Navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { firestore } from './firebaseConfig';
+import { getDocs, collection } from 'firebase/firestore';
+
+interface UserData {
+  id: string;
+  username: string;
+  profilePic: any; // ProfilePic as object from Firestore
+  points: number;
+  streaks: number;
+  position?: number; // Dynamically added property
+}
 
 export default function Leaderboard() {
   const [fontsLoaded] = useFonts({
@@ -11,24 +22,54 @@ export default function Leaderboard() {
     Poppins_600SemiBold,
   });
 
+  const [topUsers, setTopUsers] = useState<UserData[]>([]);
+  const [otherUsers, setOtherUsers] = useState<UserData[]>([]);
+
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const usersSnapshot = await getDocs(collection(firestore, 'users'));
+        const usersData: UserData[] = usersSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            username: data.username,
+            profilePic: data.profilePic || null, // Handle missing profilePic
+            points: data.points,
+            streaks: data.streaks,
+          };
+        });
+
+        // Sort users by points in descending order
+        const sortedUsers = usersData.sort((a, b) => b.points - a.points);
+
+        // Assign ranks and split top 3 and remaining users
+        const topThree = sortedUsers.slice(0, 3).map((user, index) => ({
+          ...user,
+          position: index + 1,
+        }));
+        const remainingUsers = sortedUsers.slice(3);
+
+        setTopUsers(topThree);
+        setOtherUsers(remainingUsers);
+      } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+      }
+    };
+
+    fetchLeaderboardData();
+  }, []);
+
   if (!fontsLoaded) {
     return null;
   }
 
-  const topUsers = [
-    { id: 2, name: 'Ghyani', xp: 323, position: 2 },
-    { id: 1, name: 'Rizqi', xp: 379, position: 1 },
-    { id: 3, name: 'Belvie', xp: 278, position: 3 },
-  ].sort((a, b) => {
-    const podiumOrder: { [key: number]: number } = { 2: 0, 1: 1, 3: 2 };
-    return podiumOrder[a.position] - podiumOrder[b.position];
-  });
-
-  const otherUsers = Array(7).fill({
-    name: 'Lively',
-    streaks: '12 Streaks',
-    xp: 250,
-  });
+  const renderProfilePic = (profilePic: any) => {
+    if (profilePic?.uri) {
+      return { uri: profilePic.uri }; // Custom profile picture
+    }
+    return require('../assets/images/profpic.png'); // Default profile picture
+  };
 
   return (
     <View style={styles.container}>
@@ -40,67 +81,73 @@ export default function Leaderboard() {
       {/* Podium Section */}
       <View style={styles.podiumSection}>
         <View style={styles.podiumContainer}>
-          {topUsers.map((user) => (
-            <View key={user.id} style={styles.podiumColumn}>
-              {/* Profile and Info */}
+          {/* #2 User */}
+          {topUsers[1] && (
+            <View style={[styles.podiumColumn, { alignItems: 'center' }]}>
               <Image
-                source={require('../assets/images/avatar.png')}
-                style={[
-                  styles.avatar,
-                  {
-                    marginBottom: user.position === 1 ? 8 : user.position === 2 ? 8 : 8,
-                  },
-                ]}
+                source={renderProfilePic(topUsers[1].profilePic)}
+                style={styles.avatar}
               />
-              <GlobalText style={styles.userName}>{user.name}</GlobalText>
-              <GlobalText
-                style={[
-                  styles.userXP,
-                  {
-                    color:
-                      user.position === 1
-                        ? '#009D60'
-                        : user.position === 2
-                        ? '#E5B700'
-                        : '#F7CA15',
-                  },
-                ]}
-              >
-                {user.xp} XP
+              <GlobalText style={styles.userName}>{topUsers[1].username}</GlobalText>
+              <GlobalText style={[styles.userXP, { color: '#E5B700' }]}>
+                {topUsers[1].points} XP
               </GlobalText>
-
-              {/* Podium Box */}
-              <View
-                style={[
-                  styles.podiumBox,
-                  {
-                    height: user.position === 1 ? 160 : user.position === 2 ? 140 : 120,
-                    backgroundColor:
-                      user.position === 1
-                        ? '#009D60'
-                        : user.position === 2
-                        ? '#E5B700'
-                        : '#F7CA15',
-                  },
-                ]}
-              >
+              <View style={[styles.podiumBox, { height: 140, backgroundColor: '#E5B700' }]}>
                 <View style={styles.positionBadge}>
-                  <GlobalText style={styles.positionText}>{user.position}</GlobalText>
+                  <GlobalText style={styles.positionText}>2</GlobalText>
                 </View>
               </View>
             </View>
-          ))}
+          )}
+
+          {/* #1 User */}
+          {topUsers[0] && (
+            <View style={[styles.podiumColumn, { alignItems: 'center', marginHorizontal: 20 }]}>
+              <Image
+                source={renderProfilePic(topUsers[0].profilePic)}
+                style={styles.avatar}
+              />
+              <GlobalText style={styles.userName}>{topUsers[0].username}</GlobalText>
+              <GlobalText style={[styles.userXP, { color: '#009D60' }]}>
+                {topUsers[0].points} XP
+              </GlobalText>
+              <View style={[styles.podiumBox, { height: 160, backgroundColor: '#009D60' }]}>
+                <View style={styles.positionBadge}>
+                  <GlobalText style={styles.positionText}>1</GlobalText>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* #3 User */}
+          {topUsers[2] && (
+            <View style={[styles.podiumColumn, { alignItems: 'center' }]}>
+              <Image
+                source={renderProfilePic(topUsers[2].profilePic)}
+                style={styles.avatar}
+              />
+              <GlobalText style={styles.userName}>{topUsers[2].username}</GlobalText>
+              <GlobalText style={[styles.userXP, { color: '#F7CA15' }]}>
+                {topUsers[2].points} XP
+              </GlobalText>
+              <View style={[styles.podiumBox, { height: 120, backgroundColor: '#F7CA15' }]}>
+                <View style={styles.positionBadge}>
+                  <GlobalText style={styles.positionText}>3</GlobalText>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       </View>
 
       {/* List Section */}
       <ScrollView style={styles.listContainer}>
         {otherUsers.map((user, index) => (
-          <View key={index} style={styles.listItem}>
+          <View key={user.id} style={styles.listItem}>
             <View style={styles.listLeftSection}>
               <View style={styles.avatarWrapper}>
                 <Image
-                  source={require('../assets/images/avatar.png')}
+                  source={renderProfilePic(user.profilePic)}
                   style={styles.listAvatar}
                 />
                 <View
@@ -113,13 +160,13 @@ export default function Leaderboard() {
                 </View>
               </View>
               <View style={styles.listContent}>
-                <GlobalText style={styles.listName}>{user.name}</GlobalText>
-                <GlobalText style={styles.listStreaks}>{user.streaks}</GlobalText>
+                <GlobalText style={styles.listName}>{user.username}</GlobalText>
+                <GlobalText style={styles.listStreaks}>{user.streaks} Streaks</GlobalText>
               </View>
             </View>
             <View style={styles.xpContainer}>
               <Icon name="star" style={styles.starIcon} />
-              <GlobalText style={styles.listXP}>{user.xp} XP</GlobalText>
+              <GlobalText style={styles.listXP}>{user.points} XP</GlobalText>
             </View>
           </View>
         ))}
