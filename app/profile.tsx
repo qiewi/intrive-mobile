@@ -69,6 +69,15 @@ const ProfileScreen = () => {
 
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
+  const determineLevel = (points: number): string => {
+    if (points < 500) return 'Bronze';
+    if (points < 1000) return 'Silver';
+    if (points < 1500) return 'Gold';
+    if (points < 1800) return 'Platinum';
+    if (points < 2000) return 'Diamond';
+    return 'Master';
+  };  
+
   const fetchUserData = async () => {
     try {
       const docRef = doc(firestore, "users", auth.currentUser?.uid || "");
@@ -76,14 +85,24 @@ const ProfileScreen = () => {
   
       if (docSnap.exists()) {
         const data = docSnap.data() as UserData;
-        setProfileData(data);
+  
+        const newLevel = determineLevel(data.points);
+  
+        const updatedData = {
+          ...data,
+          level: newLevel,
+        };
+  
+        await setDoc(docRef, updatedData, { merge: true });
+  
+        setProfileData(updatedData);
       } else {
-        console.log("Document not Found!");
+        console.log("Document not found!");
       }
     } catch (error) {
-      console.error("Error fetching data user:", error);
+      console.error("Error fetching user data:", error);
     }
-  };
+  };  
 
   useEffect(() => {
     if (auth.currentUser) {
