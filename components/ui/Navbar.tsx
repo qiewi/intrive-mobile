@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
   bottomNavContainer: {
     position: 'absolute',
     bottom: 42,
-    left: 16,
-    right: 16,
+    left: "10%",
+    right: "10%",
     alignItems: 'center',
   },
   bottomNav: {
@@ -82,14 +82,14 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: 'center',
-    padding: 8,
+    padding: 15,
     flexDirection: 'column',
-    gap: 8,
-    paddingHorizontal: 16,
+    gap: 6,
+    paddingHorizontal: 20,
   },
   navItemActive: {
     backgroundColor: '#009D60',
-    borderRadius: 20,
+    borderRadius: 80,
   },
   navText: {
     fontSize: 12,
