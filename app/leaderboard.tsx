@@ -64,11 +64,10 @@ export default function Leaderboard() {
     return null;
   }
 
-  const renderProfilePic = (profilePic: any) => {
-    if (profilePic?.uri) {
-      return { uri: profilePic.uri }; // Custom profile picture
-    }
-    return require('../assets/images/profpic.png'); // Default profile picture
+  const renderProfilePic = (profilePic: string | null) => {
+    return profilePic
+      ? { uri: profilePic }
+      : require('../assets/images/profpic.png'); // Fallback image
   };
 
   return (

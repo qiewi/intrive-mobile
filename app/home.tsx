@@ -93,6 +93,83 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    fetchModules();
+  }, []);
+
+  const NavigateProfile = () => {
+    router.push('/profile');
+  };
+
+  // Determine locked status for each module
+  const getLockedStatus = (moduleId: string) => {
+    const moduleKey = activeTab === 'integral' ? 'integralModule' : 'derivativeModule';
+    const filteredModules = activeTab === 'integral' ? modules.integral : modules.derivative;
+
+    if (!userModules || !userModules[moduleKey]) {
+      const lowestModuleId = Math.min(...filteredModules.map((module) => parseInt(module.id)));
+      return parseInt(moduleId) !== lowestModuleId;
+    }
+
+    const completedModuleIds = Object.keys(userModules[moduleKey])
+      .filter((key) => userModules[moduleKey][key]?.quizCompleted)
+      .map((id) => parseInt(id));
+
+    if (completedModuleIds.length === 0) {
+      const lowestModuleId = Math.min(...filteredModules.map((module) => parseInt(module.id)));
+      return parseInt(moduleId) !== lowestModuleId;
+    }
+
+    const highestCompletedId = Math.max(...completedModuleIds);
+    return parseInt(moduleId) > highestCompletedId + 1;
+  };
+
+  const getNextQuizModules = () => {
+    const getNextModule = (
+      moduleType: 'integralModules' | 'derivativeModules',
+      moduleKey: string
+    ) => {
+      const moduleList = moduleType === 'integralModules' ? modules.integral : modules.derivative;
+  
+      // Ensure moduleList is not empty before attempting to use reduce
+      if (!moduleList || moduleList.length === 0) {
+        return null; // Return null if the module list is empty
+      }
+  
+      if (!userModules || !userModules[moduleKey]) {
+        // Find the lowest module ID if there's no progress
+        return moduleList.reduce((prev, curr) =>
+          parseInt(curr.id) < parseInt(prev.id) ? curr : prev
+        );
+      }
+  
+      const completedModuleIds = Object.keys(userModules[moduleKey])
+        .filter((key) => userModules[moduleKey][key]?.quizCompleted)
+        .map((id) => parseInt(id));
+  
+      if (completedModuleIds.length === 0) {
+        // Find the lowest module ID if no quizzes are completed
+        return moduleList.reduce((prev, curr) =>
+          parseInt(curr.id) < parseInt(prev.id) ? curr : prev
+        );
+      }
+  
+      const highestCompletedId = Math.max(...completedModuleIds);
+  
+      // Find the next module (highestCompletedId + 1) or fallback to the current highest completed module
+      const nextModule = moduleList.find(
+        (module) => parseInt(module.id) === highestCompletedId + 1
+      );
+  
+      return nextModule || moduleList.find((module) => parseInt(module.id) === highestCompletedId);
+    };
+  
+    return {
+      integral: getNextModule('integralModules', 'integralModule'),
+      derivative: getNextModule('derivativeModules', 'derivativeModule'),
+    };
+  };
+
   const calculateAndUpdatePoints = async (userId: string, modules: any) => {
     try {
       let totalPoints = 0;
@@ -125,20 +202,15 @@ export default function Home() {
       console.error('Error updating user points:', error);
     }
   };
-
-  useEffect(() => {
-    fetchModules();
-  }, []);
-
-  const NavigateProfile = () => {
-    router.push('/profile');
-  };
+  
 
   if (!fontsLoaded) {
     return null;
   }
 
   const filteredModules = activeTab === 'integral' ? modules.integral : modules.derivative;
+
+  const nextQuizModules = getNextQuizModules();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -157,7 +229,10 @@ export default function Home() {
               </View>
               <View style={styles.progressBar}>
                 <View
-                  style={[styles.progress, { width: `${Math.min((userPoints / 2200) * 100, 100)}%` }]}
+                  style={[
+                    styles.progress,
+                    { width: `${Math.min((userPoints / 2200) * 100, 100)}%` },
+                  ]}
                 />
               </View>
             </View>
@@ -177,7 +252,26 @@ export default function Home() {
           style={styles.cardsScroll}
           contentContainerStyle={styles.cardsContainer}
         >
-          {/* Add your QuizCard rendering logic here */}
+          {nextQuizModules.integral && (
+            <QuizCard
+              key={nextQuizModules.integral.id}
+              id={nextQuizModules.integral.id}
+              type={nextQuizModules.integral.type}
+              title={nextQuizModules.integral.title}
+              level={nextQuizModules.integral.level}
+              image={require('../assets/quiz/1.png')}
+            />
+          )}
+          {nextQuizModules.derivative && (
+            <QuizCard
+              key={nextQuizModules.derivative.id}
+              id={nextQuizModules.derivative.id}
+              type={nextQuizModules.derivative.type}
+              title={nextQuizModules.derivative.title}
+              level={nextQuizModules.derivative.level}
+              image={require('../assets/quiz/1.png')}
+            />
+          )}
         </ScrollView>
 
         {/* Material Section */}
@@ -200,13 +294,13 @@ export default function Home() {
               subtitle={module.topic}
               image={require('../assets/quiz/1.png')}
               type={module.type}
-              locked={false} // Add your logic here
+              locked={getLockedStatus(module.id)}
             />
           ))}
         </View>
       </ScrollView>
 
-      {/* Navbar */}
+      {/* Reusable Navbar */}
       <Navbar activeTab="home" />
     </SafeAreaView>
   );
