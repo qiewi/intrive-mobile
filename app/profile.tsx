@@ -39,10 +39,15 @@ const ProfileScreen = () => {
       await signOut(auth);
       router.replace('/');
   
+      // Add a listener to intercept back navigation
       window.history.pushState(null, '', '/');
-      window.onpopstate = () => {
-        router.replace('/');
+      const onPopStateHandler = (event: PopStateEvent) => {
+        if (window.location.pathname !== '/') {
+          router.replace('/');
+        }
       };
+  
+      window.onpopstate = onPopStateHandler;
     } catch (error) {
       console.error('Error signing out: ', error);
       Alert.alert('Error', 'Failed to log out. Please try again.');
@@ -149,6 +154,8 @@ const ProfileScreen = () => {
   }
 
   const BackToPreviousPage = () => {
+    // Remove the browser's popstate handler temporarily for this navigation
+    window.onpopstate = null;
     router.back();
   };
 
