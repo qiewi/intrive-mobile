@@ -129,26 +129,26 @@ export default function QuizPage() {
       const correctCount = getCorrectAnswersCount();
       const points = calculatePoints(correctCount);
       const elapsedTime = 180 - timeLeft;
-
+  
       const loggedInUser = auth.currentUser;
       if (!loggedInUser) {
         Alert.alert('Error', 'You must be logged in to save progress.');
         router.push('/signin');
         return;
       }
-
+  
       const userId = loggedInUser.uid;
       const userDocRef = doc(firestore, 'users', userId);
       const userDocSnap = await getDoc(userDocRef);
-
+  
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         const userModules = userData.modules || {};
         const moduleKey = type === 'integralModules' ? 'integralModule' : 'derivativeModule';
-
+  
         const moduleId = parseInt(id as string, 10);
         const allCorrect = correctCount === quizData.questions.length;
-
+  
         const updatedModule = {
           ...userModules[moduleKey]?.[moduleId],
           points,
@@ -157,7 +157,7 @@ export default function QuizPage() {
           status: allCorrect ? 'Completed' : 'Incomplete',
           quizScore: correctCount,
         };
-
+  
         await setDoc(
           userDocRef,
           {
@@ -169,7 +169,7 @@ export default function QuizPage() {
           },
           { merge: true }
         );
-
+  
         if (type === 'integralModules' && allCorrect) {
           const integralModules = userData.modules?.integralModule || {};
           const isModule11Completed = integralModules[11]?.status === 'Completed';
@@ -182,34 +182,64 @@ export default function QuizPage() {
           const isModule18Completed = integralModules[18]?.status === 'Completed';
           const isModule19Completed = integralModules[19]?.status === 'Completed';
           const isModule20Completed = integralModules[20]?.status === 'Completed';
-
+  
           if (isModule20Completed) {
             const updatedBadges = userData.badges.map((badge: { title: string; }) => 
               badge.title === "Integral Innovator" ? { ...badge, unlocked: true } : badge
             );
             await updateDoc(userDocRef, { badges: updatedBadges });
-            Alert.alert('Congratulations!', 'You\'ve unlocked the Integral Innovator badge!');
           } else if (isModule18Completed && isModule19Completed) {
             const updatedBadges = userData.badges.map((badge: { title: string; }) => 
               badge.title === "Math Wiz Kid" ? { ...badge, unlocked: true } : badge
             );
             await updateDoc(userDocRef, { badges: updatedBadges });
-            Alert.alert('Congratulations!', 'You\'ve unlocked the Math Wiz Kid badge!');
           } else if (isModule14Completed && isModule15Completed && isModule16Completed && isModule17Completed) {
             const updatedBadges = userData.badges.map((badge: { title: string; }) => 
               badge.title === "Equation Explorer" ? { ...badge, unlocked: true } : badge
             );
             await updateDoc(userDocRef, { badges: updatedBadges });
-            Alert.alert('Congratulations!', 'You\'ve unlocked the Equation Explorer badge!');
           } else if (isModule11Completed && isModule12Completed && isModule13Completed) {
             const updatedBadges = userData.badges.map((badge: { title: string; }) => 
               badge.title === "Number Ninja" ? { ...badge, unlocked: true } : badge
             );
             await updateDoc(userDocRef, { badges: updatedBadges });
-            Alert.alert('Congratulations!', 'You\'ve unlocked the Number Ninja badge!');
+          }
+        } else if (type === 'derivativeModules' && allCorrect) {
+          const derivativeModules = userData.modules?.derivativeModule || {};
+          const isModule21Completed = derivativeModules[21]?.status === 'Completed';
+          const isModule22Completed = derivativeModules[22]?.status === 'Completed';
+          const isModule23Completed = derivativeModules[23]?.status === 'Completed';
+          const isModule24Completed = derivativeModules[24]?.status === 'Completed';
+          const isModule25Completed = derivativeModules[25]?.status === 'Completed';
+          const isModule26Completed = derivativeModules[26]?.status === 'Completed';
+          const isModule27Completed = derivativeModules[27]?.status === 'Completed';
+          const isModule28Completed = derivativeModules[28]?.status === 'Completed';
+          const isModule29Completed = derivativeModules[29]?.status === 'Completed';
+          const isModule30Completed = derivativeModules[30]?.status === 'Completed';
+  
+          if (isModule29Completed && isModule30Completed) {
+            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
+              badge.title === "Area Analyzer" ? { ...badge, unlocked: true } : badge
+            );
+            await updateDoc(userDocRef, { badges: updatedBadges });
+          } else if (isModule26Completed && isModule27Completed && isModule28Completed) {
+            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
+              badge.title === "Problem Solver" ? { ...badge, unlocked: true } : badge
+            );
+            await updateDoc(userDocRef, { badges: updatedBadges });
+          } else if (isModule24Completed && isModule25Completed) {
+            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
+              badge.title === "Slope Specialist" ? { ...badge, unlocked: true } : badge
+            );
+            await updateDoc(userDocRef, { badges: updatedBadges });
+          } else if (isModule21Completed && isModule22Completed && isModule23Completed) {
+            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
+              badge.title === "Function Finder" ? { ...badge, unlocked: true } : badge
+            );
+            await updateDoc(userDocRef, { badges: updatedBadges });
           }
         }
-
+  
         Alert.alert('Success', allCorrect ? 'Quiz completed successfully!' : 'Progress saved!');
       } else {
         Alert.alert('Error', 'User data not found.');
@@ -218,7 +248,7 @@ export default function QuizPage() {
       console.error('Error saving progress:', error);
       Alert.alert('Error', 'Could not save progress.');
     }
-  };
+  };  
   
   // Call `storeProgress` when the quiz is complete or the timer runs out
   useEffect(() => {
