@@ -170,42 +170,99 @@ export default function QuizPage() {
           { merge: true }
         );
   
-        if (type === 'integralModules' && allCorrect) {
+        // Update badges
+        const updatedBadges = [...(userData.badges || [])];
+  
+        if (type === 'integralModules') {
           const integralModules = userData.modules?.integralModule || {};
-          const isModule11Completed = integralModules[11]?.status === 'Completed';
-          const isModule12Completed = integralModules[12]?.status === 'Completed';
-          const isModule13Completed = integralModules[13]?.status === 'Completed';
-          const isModule14Completed = integralModules[14]?.status === 'Completed';
-          const isModule15Completed = integralModules[15]?.status === 'Completed';
-          const isModule16Completed = integralModules[16]?.status === 'Completed';
-          const isModule17Completed = integralModules[17]?.status === 'Completed';
-          const isModule18Completed = integralModules[18]?.status === 'Completed';
-          const isModule19Completed = integralModules[19]?.status === 'Completed';
-          const isModule20Completed = integralModules[20]?.status === 'Completed';
+
+          const isModule13Completed = integralModules[12]?.status === 'Completed';
+  
+          if (isModule13Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Number Ninja') {
+                badge.unlocked = true;
+              }
+            });
+          }
+  
+          const isModule17Completed = integralModules[16]?.status === 'Completed';
+  
+          if (isModule17Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Equation Explorer') {
+                badge.unlocked = true;
+              }
+            });
+          }
+  
+          const isModule19Completed = integralModules[18]?.status === 'Completed';
+  
+          if (isModule19Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Math Wiz Kid') {
+                badge.unlocked = true;
+              }
+            });
+          }
+
+          const isModule20Completed = integralModules[19]?.status === 'Completed';
   
           if (isModule20Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Integral Innovator" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          } else if (isModule18Completed && isModule19Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Math Wiz Kid" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          } else if (isModule14Completed && isModule15Completed && isModule16Completed && isModule17Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Equation Explorer" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          } else if (isModule11Completed && isModule12Completed && isModule13Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Number Ninja" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Integral Innovator') {
+                badge.unlocked = true;
+              }
+            });
           }
         }
-        
+  
+        if (type === 'derivativeModules') {
+          const derivativeModules = userData.modules?.derivativeModule || {};
+  
+          const isModule23Completed = derivativeModules[22]?.status === 'Completed';
+          
+          if (isModule23Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Function Finder') {
+                badge.unlocked = true;
+              }
+            });
+          }
+
+          const isModule25Completed = derivativeModules[24]?.status === 'Completed';
+          
+          if (isModule25Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Slope Specialist') {
+                badge.unlocked = true;
+              }
+            });
+          }
+  
+          const isModule28Completed = derivativeModules[27]?.status === 'Completed';
+  
+          if (isModule28Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Problem Solver') {
+                badge.unlocked = true;
+              }
+            });
+          }
+  
+          const isModule30Completed = derivativeModules[29]?.status === 'Completed';
+  
+          if (isModule30Completed) {
+            updatedBadges.forEach((badge) => {
+              if (badge.title === 'Area Analyzer') {
+                badge.unlocked = true;
+              }
+            });
+          }
+        }
+  
+        await updateDoc(userDocRef, { badges: updatedBadges });
+  
         Alert.alert('Success', allCorrect ? 'Quiz completed successfully!' : 'Progress saved!');
       } else {
         Alert.alert('Error', 'User data not found.');
@@ -214,7 +271,7 @@ export default function QuizPage() {
       console.error('Error saving progress:', error);
       Alert.alert('Error', 'Could not save progress.');
     }
-  };  
+  };
   
   // Call `storeProgress` when the quiz is complete or the timer runs out
   useEffect(() => {

@@ -17,7 +17,7 @@ export const derivativeModules = [
       id: '22',
       type: 'derivative',
       title: 'Turunan',
-      level: 2,
+      level: 1,
       status: 'Incomplete',
       topic: 'Turunan Implisit dan Laju Berkaitan',
       videos: [
@@ -29,7 +29,7 @@ export const derivativeModules = [
       id: '23',
       type: 'derivative',
       title: 'Turunan',
-      level: 3,
+      level: 1,
       status: 'Incomplete',
       topic: 'Diferensial dan Hampiran',
       videos: [
@@ -41,7 +41,7 @@ export const derivativeModules = [
       id: '24',
       type: 'derivative',
       title: 'Aplikasi Turunan',
-      level: 4,
+      level: 2,
       status: 'Incomplete',
       topic: 'Maksimum dan Minimum',
       videos: [
@@ -53,7 +53,7 @@ export const derivativeModules = [
       id: '25',
       type: 'derivative',
       title: 'Aplikasi Turunan',
-      level: 5,
+      level: 2,
       status: 'Incomplete',
       topic: 'Kemonotonan dan Kecekungan',
       videos: [
@@ -65,7 +65,7 @@ export const derivativeModules = [
       id: '26',
       type: 'derivative',
       title: 'Aplikasi Turunan',
-      level: 6,
+      level: 3,
       status: 'Incomplete',
       topic: 'Ekstrem Lokal dan Sketsa Grafik',
       videos: [
@@ -78,7 +78,7 @@ export const derivativeModules = [
       id: '27',
       type: 'derivative',
       title: 'Aplikasi Turunan',
-      level: 7,
+      level: 3,
       status: 'Incomplete',
       topic: 'Teorema Nilai Rata-rata Turunan',
       videos: [
@@ -90,7 +90,7 @@ export const derivativeModules = [
       id: '28',
       type: 'derivative',
       title: 'Aplikasi Turunan',
-      level: 8,
+      level: 3,
       status: 'Incomplete',
       topic: 'Anti Turunan',
       videos: [
@@ -102,7 +102,7 @@ export const derivativeModules = [
       id: '29',
       type: 'derivative',
       title: 'Turunan Fungsi Multivariabel',
-      level: 9,
+      level: 4,
       status: 'Incomplete',
       topic: 'Turunan Parsial',
       videos: [
@@ -115,7 +115,7 @@ export const derivativeModules = [
       id: '30',
       type: 'derivative',
       title: 'Turunan Fungsi Multivariabel',
-      level: 10,
+      level: 4,
       status: 'Incomplete',
       topic: 'Limit, Kekontinuan, Keterdiferensialan',
       videos: [

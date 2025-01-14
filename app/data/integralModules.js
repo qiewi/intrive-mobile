@@ -15,7 +15,7 @@ export const integralModules = [
       id: '12',
       type: 'integral',
       title: 'Integral Tentu',
-      level: 2,
+      level: 1,
       status: 'Incomplete',
       topic: 'Teorema Dasar Kalkulus',
       videos: [
@@ -29,7 +29,7 @@ export const integralModules = [
       id: '13',
       type: 'integral',
       title: 'Integral Tentu',
-      level: 3,
+      level: 1,
       status: 'Incomplete',
       topic: 'Integrasi Numerik',
       videos: [
@@ -41,7 +41,7 @@ export const integralModules = [
       id: '14',
       type: 'integral',
       title: 'Aplikasi Integral',
-      level: 4,
+      level: 2,
       status: 'Incomplete',
       topic: 'Luas Daerah pada Bidang',
       videos: [
@@ -53,7 +53,7 @@ export const integralModules = [
       id: '15',
       type: 'integral',
       title: 'Aplikasi Integral',
-      level: 5,
+      level: 2,
       status: 'Incomplete',
       topic: 'Volume pada Bidang',
       videos: [
@@ -66,7 +66,7 @@ export const integralModules = [
       id: '16',
       type: 'integral',
       title: 'Aplikasi Integral',
-      level: 6,
+      level: 2,
       status: 'Incomplete',
       topic: 'Usaha atau Kerja',
       videos: [
@@ -78,7 +78,7 @@ export const integralModules = [
       id: '17',
       type: 'integral',
       title: 'Aplikasi Integral',
-      level: 7,
+      level: 2,
       status: 'Incomplete',
       topic: 'Momen dan Centroid',
       videos: [
@@ -90,7 +90,7 @@ export const integralModules = [
       id: '18',
       type: 'integral',
       title: 'Bentuk Tak Tentu',
-      level: 8,
+      level: 3,
       status: 'Incomplete',
       topic: 'Bentuk 0/0, Infinite',
       videos: [
@@ -103,7 +103,7 @@ export const integralModules = [
       id: '19',
       type: 'integral',
       title: 'Integral Tak Tentu',
-      level: 9,
+      level: 3,
       status: 'Incomplete',
       topic: 'Integral dengan Batas Tak Hingga',
       videos: [
@@ -116,7 +116,7 @@ export const integralModules = [
       id: '20',
       type: 'integral',
       title: 'Integral Lipat',
-      level: 10,
+      level: 4,
       status: 'Incomplete',
       topic: 'Integral Berulang',
       videos: [
