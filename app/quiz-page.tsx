@@ -204,42 +204,8 @@ export default function QuizPage() {
             );
             await updateDoc(userDocRef, { badges: updatedBadges });
           }
-        } else if (type === 'derivativeModules' && allCorrect) {
-          const derivativeModules = userData.modules?.derivativeModule || {};
-          const isModule21Completed = derivativeModules[21]?.status === 'Completed';
-          const isModule22Completed = derivativeModules[22]?.status === 'Completed';
-          const isModule23Completed = derivativeModules[23]?.status === 'Completed';
-          const isModule24Completed = derivativeModules[24]?.status === 'Completed';
-          const isModule25Completed = derivativeModules[25]?.status === 'Completed';
-          const isModule26Completed = derivativeModules[26]?.status === 'Completed';
-          const isModule27Completed = derivativeModules[27]?.status === 'Completed';
-          const isModule28Completed = derivativeModules[28]?.status === 'Completed';
-          const isModule29Completed = derivativeModules[29]?.status === 'Completed';
-          const isModule30Completed = derivativeModules[30]?.status === 'Completed';
-  
-          if (isModule29Completed && isModule30Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Area Analyzer" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          } else if (isModule26Completed && isModule27Completed && isModule28Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Problem Solver" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          } else if (isModule24Completed && isModule25Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Slope Specialist" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          } else if (isModule21Completed && isModule22Completed && isModule23Completed) {
-            const updatedBadges = userData.badges.map((badge: { title: string; }) => 
-              badge.title === "Function Finder" ? { ...badge, unlocked: true } : badge
-            );
-            await updateDoc(userDocRef, { badges: updatedBadges });
-          }
         }
-  
+        
         Alert.alert('Success', allCorrect ? 'Quiz completed successfully!' : 'Progress saved!');
       } else {
         Alert.alert('Error', 'User data not found.');
