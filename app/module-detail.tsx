@@ -230,7 +230,7 @@ export default function ModuleDetail() {
           onPressOut={() => setTooltipVisible(false)}
         >
           <Text style={styles.levelUpText}>
-            Level Up
+            Start Quiz
           </Text>
         </TouchableOpacity>
         {tooltipVisible && (

@@ -1,6 +1,6 @@
 export const integralQuizzes = [
     {
-      id: '1',
+      id: '11',
       questions: [
         {
           question: "Jika f(x) = x², berapa hasil dari jumlah Riemann menggunakan 4 subinterval yang sama pada interval [0, 1]?",
@@ -35,7 +35,7 @@ export const integralQuizzes = [
       ],
     },
     {
-      id: '2',
+      id: '12',
       questions: [
         {
           "question": "Jika F(x) adalah antiturunan dari f(x), menurut Teorema Dasar Kalkulus, apa nilai F'(x)?",
@@ -70,7 +70,7 @@ export const integralQuizzes = [
       ],
     },
     {
-      id: '3',
+      id: '13',
       questions: [
         {
           "question": "Dalam metode Simpson 1/3, pembagian interval harus berjumlah?",
@@ -105,7 +105,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      id: '4',
+      id: '14',
       questions: [
         {
           "question": "Apa rumus umum untuk menghitung luas daerah di bawah kurva y = f(x) pada interval [a, b]?",
@@ -140,7 +140,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      id: '5',
+      id: '15',
       questions: [
         {
           "question": "Metode apa yang digunakan untuk menghitung volume benda putar dengan memotong benda menjadi lapisan-lapisan tipis berbentuk lempeng?",
@@ -175,7 +175,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      id: '6',
+      id: '16',
       questions: [
         {
           "question": "Jika gaya F(x) = 3x pada interval [0, 2], berapa usaha yang dilakukan gaya tersebut?",
@@ -200,7 +200,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      "id": '7',
+      "id": '17',
       "questions": [
         {
           "question": "Rumus untuk menghitung momen inersia I dari benda yang diputar di sekitar sumbu adalah?",
@@ -225,7 +225,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      "id": '8',
+      "id": '18',
       "questions": [
         {
           "question": "Jika lim x→0 (sin(x)/x) = ?",
@@ -250,7 +250,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      "id": '9',
+      "id": '19',
       "questions": [
         {
           "question": "Integral dengan batas tak hingga dapat diselesaikan dengan cara?",
@@ -285,7 +285,7 @@ export const integralQuizzes = [
       ]
     },
     {
-      "id": '10',
+      "id": '20',
       "questions": [
         {
           "question": "Integral lipat digunakan untuk menghitung?",

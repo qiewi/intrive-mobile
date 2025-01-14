@@ -37,7 +37,7 @@ export async function syncUserHistory(userId: string) {
       };
 
       // Loop through integral modules
-      for (let i = 1; i <= moduleCounts.integralModules; i++) {
+      for (let i = 11; i <= moduleCounts.integralModules; i++) {
         if (!userModules.integralModule[i]) {
           userModules.integralModule[i] = {
             status: 'Incomplete',
@@ -51,7 +51,7 @@ export async function syncUserHistory(userId: string) {
       }
 
       // Loop through derivative modules
-      for (let i = 1; i <= moduleCounts.derivativeModules; i++) {
+      for (let i = 11; i <= moduleCounts.derivativeModules; i++) {
         if (!userModules.derivativeModule[i]) {
           userModules.derivativeModule[i] = {
             status: 'Incomplete',

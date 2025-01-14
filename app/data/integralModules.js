@@ -1,6 +1,6 @@
 export const integralModules = [
     {
-      id: '1',
+      id: '11',
       type: 'integral',
       title: 'Integral Tentu',
       level: 1,
@@ -12,7 +12,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '2',
+      id: '12',
       type: 'integral',
       title: 'Integral Tentu',
       level: 2,
@@ -26,7 +26,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '3',
+      id: '13',
       type: 'integral',
       title: 'Integral Tentu',
       level: 3,
@@ -38,7 +38,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '4',
+      id: '14',
       type: 'integral',
       title: 'Aplikasi Integral',
       level: 4,
@@ -50,7 +50,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '5',
+      id: '15',
       type: 'integral',
       title: 'Aplikasi Integral',
       level: 5,
@@ -63,7 +63,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '6',
+      id: '16',
       type: 'integral',
       title: 'Aplikasi Integral',
       level: 6,
@@ -75,7 +75,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '7',
+      id: '17',
       type: 'integral',
       title: 'Aplikasi Integral',
       level: 7,
@@ -87,7 +87,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '8',
+      id: '18',
       type: 'integral',
       title: 'Bentuk Tak Tentu',
       level: 8,
@@ -100,7 +100,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '9',
+      id: '19',
       type: 'integral',
       title: 'Integral Tak Tentu',
       level: 9,
@@ -113,7 +113,7 @@ export const integralModules = [
       userScore: 0,
     },
     {
-      id: '10',
+      id: '20',
       type: 'integral',
       title: 'Integral Lipat',
       level: 10,

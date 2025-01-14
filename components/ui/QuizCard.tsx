@@ -4,7 +4,7 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-
 
 interface QuizCardProps {
   id: string;
-  type: 'integralModules' | 'derivativeModules';
+  type: string;
   title: string;
   level: number;
   image: any; // Use `any` for require() image type
@@ -21,7 +21,8 @@ export const QuizCard = ({ id, type, title, level, image }: QuizCardProps) => {
   if (!fontsLoaded) return null;
 
   const handleNavigation = () => {
-    router.push(`/module-detail?id=${id}&type=${type}`);
+    const moduleType = type === 'integral' ? 'integralModules' : 'derivativeModules';
+    router.push(`/module-detail?id=${id}&type=${moduleType}`);
   };
 
   return (

@@ -201,6 +201,7 @@ export default function Home() {
               subtitle={module.topic}
               image={require('../assets/quiz/1.png')}
               type={module.type}
+              locked={false}
             />
           ))}
         </View>
