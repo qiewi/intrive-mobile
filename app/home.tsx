@@ -16,7 +16,7 @@ import { Navbar } from '../components/ui/Navbar';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import { useRouter } from 'expo-router';
 import { auth, firestore } from './firebaseConfig';
-import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 interface Module {
   id: string;
@@ -100,17 +100,12 @@ export default function Home() {
     router.push('/profile');
   };
 
-  if (!fontsLoaded) {
-    return null; // Render nothing until fonts are loaded
-  }
-
-  const filteredModules = activeTab === 'integral' ? modules.integral : modules.derivative;
-  const moduleKey = activeTab === 'integral' ? 'integralModule' : 'derivativeModule';
-
   // Determine locked status for each module
   const getLockedStatus = (moduleId: string) => {
+    const moduleKey = activeTab === 'integral' ? 'integralModule' : 'derivativeModule';
+    const filteredModules = activeTab === 'integral' ? modules.integral : modules.derivative;
+
     if (!userModules || !userModules[moduleKey]) {
-      // All modules are locked except the lowest one if no progress
       const lowestModuleId = Math.min(...filteredModules.map((module) => parseInt(module.id)));
       return parseInt(moduleId) !== lowestModuleId;
     }
@@ -128,16 +123,68 @@ export default function Home() {
     return parseInt(moduleId) > highestCompletedId + 1;
   };
 
+  const getNextQuizModules = () => {
+    const getNextModule = (
+      moduleType: 'integralModules' | 'derivativeModules',
+      moduleKey: string
+    ) => {
+      const moduleList = moduleType === 'integralModules' ? modules.integral : modules.derivative;
+  
+      // Ensure moduleList is not empty before attempting to use reduce
+      if (!moduleList || moduleList.length === 0) {
+        return null; // Return null if the module list is empty
+      }
+  
+      if (!userModules || !userModules[moduleKey]) {
+        // Find the lowest module ID if there's no progress
+        return moduleList.reduce((prev, curr) =>
+          parseInt(curr.id) < parseInt(prev.id) ? curr : prev
+        );
+      }
+  
+      const completedModuleIds = Object.keys(userModules[moduleKey])
+        .filter((key) => userModules[moduleKey][key]?.quizCompleted)
+        .map((id) => parseInt(id));
+  
+      if (completedModuleIds.length === 0) {
+        // Find the lowest module ID if no quizzes are completed
+        return moduleList.reduce((prev, curr) =>
+          parseInt(curr.id) < parseInt(prev.id) ? curr : prev
+        );
+      }
+  
+      const highestCompletedId = Math.max(...completedModuleIds);
+  
+      // Find the next module (highestCompletedId + 1) or fallback to the current highest completed module
+      const nextModule = moduleList.find(
+        (module) => parseInt(module.id) === highestCompletedId + 1
+      );
+  
+      return nextModule || moduleList.find((module) => parseInt(module.id) === highestCompletedId);
+    };
+  
+    return {
+      integral: getNextModule('integralModules', 'integralModule'),
+      derivative: getNextModule('derivativeModules', 'derivativeModule'),
+    };
+  };
+  
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  const filteredModules = activeTab === 'integral' ? modules.integral : modules.derivative;
+
+  const nextQuizModules = getNextQuizModules();
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <TouchableOpacity onPress={NavigateProfile}>
         <View style={styles.header}>
           <View style={styles.profile}>
-            <Image
-              source={require('../assets/quiz/1.png')}
-              style={styles.avatar}
-            />
+            <Image source={require('../assets/quiz/1.png')} style={styles.avatar} />
             <View style={styles.headerContainer}>
               <View style={styles.levelContainer}>
                 <Text style={styles.levelText}>My Level Progress</Text>
@@ -171,16 +218,26 @@ export default function Home() {
           style={styles.cardsScroll}
           contentContainerStyle={styles.cardsContainer}
         >
-          {filteredModules.map((module) => (
+          {nextQuizModules.integral && (
             <QuizCard
-              key={module.id}
-              id={module.id}
-              type={module.type}
-              title={module.title}
-              level={module.level}
+              key={nextQuizModules.integral.id}
+              id={nextQuizModules.integral.id}
+              type={nextQuizModules.integral.type}
+              title={nextQuizModules.integral.title}
+              level={nextQuizModules.integral.level}
               image={require('../assets/quiz/1.png')}
             />
-          ))}
+          )}
+          {nextQuizModules.derivative && (
+            <QuizCard
+              key={nextQuizModules.derivative.id}
+              id={nextQuizModules.derivative.id}
+              type={nextQuizModules.derivative.type}
+              title={nextQuizModules.derivative.title}
+              level={nextQuizModules.derivative.level}
+              image={require('../assets/quiz/1.png')}
+            />
+          )}
         </ScrollView>
 
         {/* Material Section */}
