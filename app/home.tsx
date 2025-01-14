@@ -34,8 +34,8 @@ export default function Home() {
     integral: [],
     derivative: [],
   });
+  const [userModules, setUserModules] = useState<any | null>(null);
   const [userPoints, setUserPoints] = useState(0);
-
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -46,7 +46,7 @@ export default function Home() {
     const loggedIn = auth.onAuthStateChanged((user) => {
       if (user) {
         setUsername(user.displayName || 'User');
-        fetchUserPoints(user.uid);
+        fetchUserModules(user.uid);
       } else {
         setUsername('User');
       }
@@ -77,35 +77,18 @@ export default function Home() {
     }
   };
 
-  const fetchUserPoints = async (userId: string) => {
+  const fetchUserModules = async (userId: string) => {
     try {
       const userDocRef = doc(firestore, 'users', userId);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const { modules } = userData;
-
-        // Calculate total points from all modules
-        const integralPoints = Object.values(modules?.integralModule || {}).reduce(
-          (acc: number, module: any) => acc + (module.points || 0),
-          0
-        );
-        const derivativePoints = Object.values(modules?.derivativeModule || {}).reduce(
-          (acc: number, module: any) => acc + (module.points || 0),
-          0
-        );
-
-        const totalPoints = integralPoints + derivativePoints;
-
-        // Update points in Firestore
-        await updateDoc(userDocRef, { points: totalPoints });
-
-        // Update local state
-        setUserPoints(totalPoints);
+        setUserModules(userData.modules || {});
+        setUserPoints(userData.points || 0);
       }
     } catch (error) {
-      console.error('Error fetching user points:', error);
+      console.error('Error fetching user modules:', error);
     }
   };
 
@@ -121,42 +104,61 @@ export default function Home() {
     return null; // Render nothing until fonts are loaded
   }
 
-  const filteredModules =
-    activeTab === 'integral' ? modules.integral : modules.derivative;
+  const filteredModules = activeTab === 'integral' ? modules.integral : modules.derivative;
+  const moduleKey = activeTab === 'integral' ? 'integralModule' : 'derivativeModule';
 
-  const allModules = [...modules.integral, ...modules.derivative];
+  // Determine locked status for each module
+  const getLockedStatus = (moduleId: string) => {
+    if (!userModules || !userModules[moduleKey]) {
+      // All modules are locked except the lowest one if no progress
+      const lowestModuleId = Math.min(...filteredModules.map((module) => parseInt(module.id)));
+      return parseInt(moduleId) !== lowestModuleId;
+    }
+
+    const completedModuleIds = Object.keys(userModules[moduleKey])
+      .filter((key) => userModules[moduleKey][key]?.quizCompleted)
+      .map((id) => parseInt(id));
+
+    if (completedModuleIds.length === 0) {
+      const lowestModuleId = Math.min(...filteredModules.map((module) => parseInt(module.id)));
+      return parseInt(moduleId) !== lowestModuleId;
+    }
+
+    const highestCompletedId = Math.max(...completedModuleIds);
+    return parseInt(moduleId) > highestCompletedId + 1;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-        {/* Header */}
-        <TouchableOpacity onPress={NavigateProfile}>
-          <View style={styles.header}>
-            <View style={styles.profile}>
-              <Image
-                source={require('../assets/quiz/1.png')}
-                style={styles.avatar}
-              />
-              <View style={styles.headerContainer}>
-                <View style={styles.levelContainer}>
-                  <Text style={styles.levelText}>My Level Progress</Text>
-                  <View style={styles.xpContainer}>
-                    <FontAwesome name="star" size={16} color="#FFB800" />
-                    <Text style={styles.xpText}>{userPoints} PX</Text>
-                  </View>
+      {/* Header */}
+      <TouchableOpacity onPress={NavigateProfile}>
+        <View style={styles.header}>
+          <View style={styles.profile}>
+            <Image
+              source={require('../assets/quiz/1.png')}
+              style={styles.avatar}
+            />
+            <View style={styles.headerContainer}>
+              <View style={styles.levelContainer}>
+                <Text style={styles.levelText}>My Level Progress</Text>
+                <View style={styles.xpContainer}>
+                  <FontAwesome name="star" size={16} color="#FFB800" />
+                  <Text style={styles.xpText}>{userPoints} PX</Text>
                 </View>
-                <View style={styles.progressBar}>
-                  <View
-                    style={[
-                      styles.progress,
-                      { width: `${Math.min((userPoints / 2200) * 100, 100)}%` },
-                    ]}
-                  />
-                </View>
+              </View>
+              <View style={styles.progressBar}>
+                <View
+                  style={[
+                    styles.progress,
+                    { width: `${Math.min((userPoints / 2200) * 100, 100)}%` },
+                  ]}
+                />
               </View>
             </View>
           </View>
-        </TouchableOpacity>
-        
+        </View>
+      </TouchableOpacity>
+
       <ScrollView style={styles.scrollView}>
         {/* Greeting */}
         <Text style={styles.greeting}>Hi, {username}!</Text>
@@ -169,7 +171,7 @@ export default function Home() {
           style={styles.cardsScroll}
           contentContainerStyle={styles.cardsContainer}
         >
-          {allModules.map((module) => (
+          {filteredModules.map((module) => (
             <QuizCard
               key={module.id}
               id={module.id}
@@ -187,7 +189,7 @@ export default function Home() {
           <MaterialTabs activeTab={activeTab} onTabChange={setActiveTab} />
         </View>
 
-        {/* Latest Quiz Section */}
+        {/* Modules Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Modules</Text>
@@ -201,7 +203,7 @@ export default function Home() {
               subtitle={module.topic}
               image={require('../assets/quiz/1.png')}
               type={module.type}
-              locked={false}
+              locked={getLockedStatus(module.id)}
             />
           ))}
         </View>

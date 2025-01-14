@@ -68,11 +68,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
     gap: 12,
     marginBottom: 12,
-    borderRadius: 12,
+    borderWidth: 1,
+    borderRadius: 16,
     position: 'relative', // To allow absolute positioning of the overlay
   },
   lockedContainer: {
-    opacity: 0.9, // Dim the item if locked
+    opacity: 1, // Dim the item if locked
   },
   imageContainer: {
     width: 64,
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent black background
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,

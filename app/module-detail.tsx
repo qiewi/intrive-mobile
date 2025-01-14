@@ -6,7 +6,8 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { firestore, auth } from './firebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { Tooltip } from 'react-native-elements'; 
+import { integralQuizzes } from './data/integralQuizzes';
+import { derivativeQuizzes } from './data/derivativeQuizzes';
 
 interface Video {
   id: string;
@@ -22,6 +23,7 @@ export default function ModuleDetail() {
   const [moduleData, setModuleData] = useState<any | null>(null);
   const [userModuleData, setUserModuleData] = useState<any | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [quizLength, setQuizLength] = useState<number | null>(null);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -79,6 +81,16 @@ export default function ModuleDetail() {
           setModuleData(moduleDoc.data());
         } else {
           Alert.alert('Error', 'Module not found.');
+        }
+
+        // Fetch quiz data and set quiz length
+        const quizData =
+          type === 'integralModules'
+            ? integralQuizzes.find((quiz) => quiz.id === id)
+            : derivativeQuizzes.find((quiz) => quiz.id === id);
+
+        if (quizData) {
+          setQuizLength(quizData.questions.length);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -209,11 +221,11 @@ export default function ModuleDetail() {
       <View style={styles.scoreContainer}>
         <View style={styles.scoreDetail}>
           <Text style={styles.scoreText}>Your Last Score</Text>
-          <Text style={styles.scoreValue}>{userModuleData.quizScore}</Text>
+          <Text style={styles.scoreValue}>{userModuleData.quizScore} / {quizLength}</Text>
         </View>
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
-            <View style={[styles.progress, { width: `${(userModuleData.quizScore / 5) * 100}%` }]} />
+            <View style={[styles.progress, { width: `${(userModuleData.quizScore / (quizLength || 5)) * 100}%` }]} />
           </View>
         </View>
       </View>
