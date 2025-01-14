@@ -202,8 +202,19 @@ export default function Home() {
       console.error('Error updating user points:', error);
     }
   };
-  
 
+  const calculateModuleProgress = (moduleData: any): number => {
+    if (!moduleData) return 0;
+  
+    // Count the modules with status = "Completed"
+    const completedModules = Object.values(moduleData).filter(
+      (module: any) => module.status === 'Completed'
+    ).length;
+  
+    // Calculate progress percentage (divide by 10 since there are 10 modules)
+    return Math.min((completedModules / 10) * 100, 100); // Ensure it doesn't exceed 100%
+  };
+  
   if (!fontsLoaded) {
     return null;
   }
@@ -260,6 +271,7 @@ export default function Home() {
               title={nextQuizModules.integral.title}
               level={nextQuizModules.integral.level}
               image={require('../assets/quiz/1.png')}
+              progress={calculateModuleProgress(userModules?.integralModule)} // Progress for integral modules
             />
           )}
           {nextQuizModules.derivative && (
@@ -270,9 +282,11 @@ export default function Home() {
               title={nextQuizModules.derivative.title}
               level={nextQuizModules.derivative.level}
               image={require('../assets/quiz/1.png')}
+              progress={calculateModuleProgress(userModules?.derivativeModule)} // Progress for derivative modules
             />
           )}
         </ScrollView>
+
 
         {/* Material Section */}
         <View style={styles.section}>

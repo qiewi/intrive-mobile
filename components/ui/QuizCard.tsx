@@ -8,9 +8,10 @@ interface QuizCardProps {
   title: string;
   level: number;
   image: any; // Use `any` for require() image type
+  progress: number; // Updated to accept progress as a number (percentage)
 }
 
-export const QuizCard = ({ id, type, title, level, image }: QuizCardProps) => {
+export const QuizCard = ({ id, type, title, level, image, progress }: QuizCardProps) => {
   const router = useRouter();
 
   const [fontsLoaded] = useFonts({
@@ -32,9 +33,9 @@ export const QuizCard = ({ id, type, title, level, image }: QuizCardProps) => {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.level}>Level {level}</Text>
 
-        {/* Progress Bar Example (Optional) */}
+        {/* Progress Bar */}
         <View style={styles.progressBar}>
-          <View style={styles.progress} />
+          <View style={[styles.progress, { width: `${progress}%` }]} />
         </View>
 
         {/* Image Container */}
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    width: '50%',
+    width: '100%',
     backgroundColor: '#E5E5E5',
     borderRadius: 4,
     marginVertical: 8,
@@ -88,7 +89,6 @@ const styles = StyleSheet.create({
   },
   progress: {
     height: '100%',
-    width: '60%', // Adjust the width to represent progress
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 4,
