@@ -145,10 +145,10 @@ export const integralQuizzes = [
         {
           "question": "Metode apa yang digunakan untuk menghitung volume benda putar dengan memotong benda menjadi lapisan-lapisan tipis berbentuk lempeng?",
           "answers": [
-            "Metode Lempeng",
-            "Metode Cakram",
-            "Metode Cincin",
-            "Metode Kulit Tabung"
+            "Lempeng",
+            "Cakram",
+            "Cincin",
+            "Kulit Tabung"
           ],
           "correctAnswer": 0
         },
