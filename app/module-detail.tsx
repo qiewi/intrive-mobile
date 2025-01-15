@@ -6,8 +6,6 @@ import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { firestore, auth } from './firebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { integralQuizzes } from './data/integralQuizzes';
-import { derivativeQuizzes } from './data/derivativeQuizzes';
 
 interface Video {
   id: string;
@@ -83,14 +81,14 @@ export default function ModuleDetail() {
           Alert.alert('Error', 'Module not found.');
         }
 
-        // Fetch quiz data and set quiz length
-        const quizData =
-          type === 'integralModules'
-            ? integralQuizzes.find((quiz) => quiz.id === id)
-            : derivativeQuizzes.find((quiz) => quiz.id === id);
+        const quizCollectionName = type === 'integralModules' ? 'integralQuizzes' : 'derivativeQuizzes';
+        const quizDoc = await getDoc(doc(firestore, quizCollectionName, id as string));
 
-        if (quizData) {
+        if (quizDoc.exists()) {
+          const quizData = quizDoc.data();
           setQuizLength(quizData.questions.length);
+        } else {
+          Alert.alert('Error', 'Quiz data not found.');
         }
       } catch (error) {
         console.error('Error fetching data:', error);
