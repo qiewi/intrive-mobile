@@ -64,12 +64,26 @@ export default function Leaderboard() {
     return null;
   }
 
-  const renderProfilePic = (profilePic: string | null) => {
-    return profilePic
-      ? { uri: profilePic }
-      : require('../assets/images/profpic.png'); // Fallback image
+  const renderProfilePic = (profilePic: any) => {
+    // Case 1: profilePic is an object (map) with a `uri` field
+    if (profilePic && typeof profilePic === 'object' && profilePic.uri) {
+      // Check if the `uri` is a local path (starts with '/assets')
+      if (profilePic.uri.startsWith('/assets')) {
+        return require('../assets/images/profpic.png'); // Local fallback image
+      }
+      // Use the `uri` for remote images
+      return { uri: profilePic.uri };
+    }
+  
+    // Case 2: profilePic is a string (custom profile pic)
+    if (profilePic && typeof profilePic === 'string') {
+      return { uri: profilePic }; // Directly use the string as a URI
+    }
+  
+    // Case 3: Fallback to default profile picture
+    return require('../assets/images/profpic.png');
   };
-
+  
   return (
     <View style={styles.container}>
       {/* Header */}
