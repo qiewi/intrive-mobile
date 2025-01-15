@@ -55,6 +55,31 @@ export default function Home() {
     return () => loggedIn();
   }, []);
 
+  const imageMap: Record<string, any> = {
+    '11': require('../assets/quiz/11.png'),
+    '12': require('../assets/quiz/12.png'),
+    '13': require('../assets/quiz/13.png'),
+    '14': require('../assets/quiz/14.png'),
+    '15': require('../assets/quiz/15.png'),
+    '16': require('../assets/quiz/16.png'),
+    '17': require('../assets/quiz/17.png'),
+    '18': require('../assets/quiz/18.png'),
+    '19': require('../assets/quiz/19.png'),
+    '20': require('../assets/quiz/20.png'),
+    '21': require('../assets/quiz/21.png'),
+    '22': require('../assets/quiz/22.png'),
+    '23': require('../assets/quiz/23.png'),
+    '24': require('../assets/quiz/24.png'),
+    '25': require('../assets/quiz/25.png'),
+    '26': require('../assets/quiz/26.png'),
+    '27': require('../assets/quiz/27.png'),
+    '28': require('../assets/quiz/28.png'),
+    '29': require('../assets/quiz/29.png'),
+    '30': require('../assets/quiz/30.png'),
+  };  
+
+  const image = imageMap[module.id.toString()] || imageMap['default'];
+
   const fetchModules = async () => {
     try {
       const integralSnapshot = await getDocs(collection(firestore, 'integralModules'));
@@ -306,7 +331,7 @@ export default function Home() {
               title={module.title}
               level={module.level}
               subtitle={module.topic}
-              image={require('../assets/quiz/1.png')}
+              image={imageMap[module.id]}
               type={module.type}
               locked={getLockedStatus(module.id)}
             />
