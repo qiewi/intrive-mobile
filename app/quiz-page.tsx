@@ -16,10 +16,6 @@ import { ProgressDots } from '../components/ui/ProgressDots';
 import { ResultScreen } from '../components/ui/ResultScreen';
 import { firestore, auth } from './firebaseConfig';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { integralModules } from './data/integralModules';
-import { derivativeModules } from './data/derivativeModules';
-import { integralQuizzes } from './data/integralQuizzes';
-import { derivativeQuizzes } from './data/derivativeQuizzes';
 
 interface Answer {
   questionIndex: number;
@@ -30,17 +26,38 @@ export default function QuizPage() {
   const router = useRouter();
   const { id, type } = useLocalSearchParams();
 
-  const moduleData =
-    type === 'integralModules'
-      ? integralModules.find((module) => module.id === id)
-      : derivativeModules.find((module) => module.id === id);
+  const [moduleData, setModuleData] = useState<any | null>(null);
+  const [quizData, setQuizData] = useState<any | null>(null);
 
-  const quizData =
-    type === 'integralModules'
-      ? integralQuizzes.find((quiz) => quiz.id === id)
-      : derivativeQuizzes.find((quiz) => quiz.id === id);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const moduleCollection = type === 'integralModules' ? 'integralModules' : 'derivativeModules';
+        const quizCollection = type === 'integralModules' ? 'integralQuizzes' : 'derivativeQuizzes';
 
-  if (!quizData || !moduleData) return null;
+        // Fetch module data
+        const moduleDoc = await getDoc(doc(firestore, moduleCollection, id as string));
+        if (moduleDoc.exists()) {
+          setModuleData(moduleDoc.data());
+        } else {
+          Alert.alert('Error', 'Module data not found.');
+        }
+
+        // Fetch quiz data
+        const quizDoc = await getDoc(doc(firestore, quizCollection, id as string));
+        if (quizDoc.exists()) {
+          setQuizData(quizDoc.data());
+        } else {
+          Alert.alert('Error', 'Quiz data not found.');
+        }
+      } catch (error) {
+        console.error('Error fetching data from Firestore:', error);
+        Alert.alert('Error', 'Could not load module or quiz data.');
+      }
+    };
+
+    fetchData();
+  }, [id, type]);  
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -296,8 +313,17 @@ export default function QuizPage() {
   
 
   const handleNextModule = () => {
-    router.push('/home');
+    const moduleId = parseInt(moduleData.id, 10); 
+    if (
+      (type === 'integralModules' && moduleId === 20) || 
+      (type === 'derivativeModules' && moduleId === 30)
+    ) {
+      router.push('/home'); 
+    } else {
+      router.push(`/module-detail?id=${moduleId + 1}&type=${type}`); 
+    }
   };
+  
 
   if (isTimeUp && !isComplete) {
     return (
@@ -326,6 +352,14 @@ export default function QuizPage() {
         onTryAgain={!allCorrect ? handleTryAgain : undefined}
         onNextModule={allCorrect ? handleNextModule : undefined}
       />
+    );
+  }
+
+  if (!moduleData || !quizData) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
     );
   }
 
@@ -373,7 +407,7 @@ export default function QuizPage() {
       <View style={styles.answersContainer}>
         <Text style={styles.chooseText}>Choose your answer</Text>
         <View style={styles.answerGrid}>
-          {quizData.questions[currentQuestion].answers.map((answer, index) => (
+          {quizData.questions[currentQuestion].answers.map((answer: string, index: number) => (
             <AnswerOption
               key={index}
               label={String.fromCharCode(65 + index)}
