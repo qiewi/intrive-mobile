@@ -73,8 +73,8 @@ const ProfileScreen = () => {
     if (points < 500) return 'Bronze';
     if (points < 1000) return 'Silver';
     if (points < 1500) return 'Gold';
-    if (points < 1800) return 'Platinum';
-    if (points < 2000) return 'Diamond';
+    if (points < 1800) return 'Elite';
+    if (points < 2000) return 'Legend';
     return 'Master';
   };  
 
@@ -167,6 +167,19 @@ const ProfileScreen = () => {
 
     fetchProfilePic();
   }, [userId]);
+
+  const badgeMap: Record<string, any> = {
+    '1': require('../assets/badge/0.png'),
+    '2': require('../assets/badge/1.png'),
+    '3': require('../assets/badge/2.png'),
+    '4': require('../assets/badge/3.png'),
+    '5': require('../assets/badge/4.png'),
+    '6': require('../assets/badge/5.png'),
+    '7': require('../assets/badge/6.png'),
+    '8': require('../assets/badge/7.png'),
+  };  
+
+  const badge = badgeMap[module.id.toString()] || badgeMap['default'];
 
   if (!fontsLoaded) {
     return null;
@@ -282,7 +295,7 @@ const ProfileScreen = () => {
                 <View key={badge.id} style={styles.badgeContainer}>
                   {/* Badge Image */}
                   <View style={styles.badgeWrapper}>
-                    <Image source={require('../assets/images/badge.png')} style={styles.badgeIcon} />
+                    <Image source={badgeMap[badge.id]}  style={styles.badgeIcon} />
                     {!badge.unlocked && (
                       <>
                         <Image source={require('../assets/images/badge-mask.png')} style={styles.badgeMask} />
