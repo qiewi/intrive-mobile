@@ -144,6 +144,33 @@ const ProfileScreen = () => {
     }
   };
 
+  const renderProfilePic = (profilePic: any) => {
+    // Case 1: profilePic is an object (map) with a `uri` field
+    if (profilePic && typeof profilePic === 'object' && profilePic.uri) {
+      // Check if the `uri` is a local path (starts with '/assets')
+      if (profilePic.uri.startsWith('/assets')) {
+        return require('../assets/images/profpic.png'); // Local fallback image
+      }
+      // Use the `uri` for remote images
+      return { uri: profilePic.uri };
+    }
+  
+    // Case 2: profilePic is a string (custom profile pic)
+    if (profilePic && typeof profilePic === 'string') {
+      return { uri: profilePic }; // Directly use the string as a URI
+    }
+  
+    // Case 3: Fallback to default profile picture
+    return require('../assets/images/profpic.png');
+  };
+  
+  // Inside the ProfileScreen Component
+  <Image 
+    source={renderProfilePic(profilePic)} 
+    style={styles.avatar} 
+  />
+  
+
   useEffect(() => {
     const fetchProfilePic = async () => {
       if (userId) {
@@ -203,7 +230,7 @@ const ProfileScreen = () => {
         {/* Profile Picture with Change Button */}
         <View style={styles.avatarContainer}>
           <Image 
-            source={profilePic ? { uri: profilePic } : require('../assets/images/profpic.png')} 
+            source={renderProfilePic(profilePic)}
             style={styles.avatar} 
           />
           <TouchableOpacity style={styles.changePicButton} onPress={pickImage}>
