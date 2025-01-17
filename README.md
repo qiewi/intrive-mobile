@@ -77,3 +77,11 @@ run 'npm start'
 ```
 
 Open [http://localhost:8081](http://localhost:8081) in your browser to view the project.
+
+## Contributors:
+_______
+
+| **No**     | **Nama**                   | **NIM**           |
+| ------ | ---------------------- | ------------- |
+| 1     | Rizqi Andhika Pratama  | 18222118      |
+| 2      | Khayla Belva Annandira      | 18222138     |
