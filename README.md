@@ -39,12 +39,12 @@ It has multiple modules with entertaining quizzes and awesome badges!
 
 ## <a name="features">🔋 Features</a>
 
-• Authentication
-• Learning Module
-• Quiz 
-• Leaderboard
-• Profile
-• Gamified Badge and Points
+- Authentication
+- Learning Module
+- Quiz 
+- Leaderboard
+- Profile
+- Gamified Badge and Points
 
 ## <a name="quick-start">🚀 Quick Start</a>
 
