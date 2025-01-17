@@ -1,7 +1,7 @@
 <div align="center">
   <br />
     <a href="https://intrive.space" target="_blank">
-      <img src="(https://github.com/user-attachments/assets/634e27c1-4aae-46d7-b1b0-1dff6afbccb5" alt="Project Banner">
+      <img src="https://github.com/user-attachments/assets/634e27c1-4aae-46d7-b1b0-1dff6afbccb5" alt="Project Banner">
     </a>
   <br />
 
@@ -15,7 +15,7 @@
   <h3 align="center">Integrals & Derivatives - A Gamified Virtual Lab</h3>
 
    <div align="center">
-     Download the final <a href="https://bit.ly/IntriveMobileApp" target="_blank"><b>Mobile App/b></a> here. Feel free to leave a suggestion!
+     Download the final <a href="https://bit.ly/IntriveMobileApp" target="_blank"><b>Mobile App</b></a> here. Feel free to leave a suggestion!
     </div>
 </div>
 
