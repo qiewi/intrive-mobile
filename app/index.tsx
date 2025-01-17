@@ -19,6 +19,10 @@ export default function HomeScreen() {
   }
 
   const handleGetStartedPress = () => {
+    router.push('/signup'); // Navigate to the signup page
+  };
+
+  const handleLoginPress = () => {
     router.push('/signin'); // Navigate to the signin page
   };
 
@@ -47,7 +51,7 @@ export default function HomeScreen() {
 
         {/* Footer Section */}
         <GlobalText style={styles.footerText}>
-          Already have an account? <GlobalText style={styles.loginText}>Login</GlobalText>
+          Already have an account? <GlobalText style={styles.loginText} onPress={handleLoginPress}>Login</GlobalText>
         </GlobalText>
       </View>
     </View>

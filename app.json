@@ -14,7 +14,8 @@
         "image": "./assets/images/splash.png",
         "resizeMode": "contain",
         "backgroundColor": "#00824F"
-      }
+      },
+      "bundleIdentifier": "com.khaylabelva.intrivemobile"
     },
     "android": {
       "permissions": [],
@@ -26,7 +27,8 @@
         "image": "./assets/images/splash.png",
         "resizeMode": "contain",
         "backgroundColor": "#00824F"
-      }
+      },
+      "package": "com.khaylabelva.intrivemobile"
     },
     "web": {
       "bundler": "metro",
@@ -48,6 +50,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "73453470-59fa-4470-8f3c-a710a9edaef8"
+      }
     }
   }
 }
